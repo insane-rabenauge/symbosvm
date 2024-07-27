@@ -91,7 +91,7 @@ int z80_in(unsigned int port, unsigned int PC) {
       return(system_scankey());
       break;
     case P_USEDCPU_L:
-      ticks_lines=(ticks_framestart-system_gettickus())>>6;
+      ticks_lines=(system_gettickus()-ticks_framestart)>>6;
       return(ticks_lines&0xff);
       break;
     case P_USEDCPU_H:

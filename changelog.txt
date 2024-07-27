@@ -7,4 +7,5 @@ planned for the far future:
 - OPL3, OPL4, AY, MP3 sound
 - GFX9000 "lite" emulation
 - Network
+- performance counter for run_z80
 
