@@ -299,7 +299,10 @@ int system_initsdl() {
 
     system_setfullscreen();
     SDL_SetRelativeMouseMode(0);
+
+#if SDL_VERSION_ATLEAST(2,0,16)
     SDL_SetWindowKeyboardGrab(sdlwindow,var_system_grabkeys);
+#endif
   };
 
 
