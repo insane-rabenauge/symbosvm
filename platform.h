@@ -13,5 +13,9 @@
 #define OS_FSEEK fseeko
 #define OS_FTELL ftello
 #endif
+#ifdef __GENODE__
+#define OS_FSEEK fseeko
+#define OS_FTELL ftello
+#endif
 
 #endif
