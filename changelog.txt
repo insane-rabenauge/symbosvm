@@ -1,0 +1,10 @@
+v0.9: initial release @ fujijama 2024 party
+- textmode support untested
+- no sound support other than beeper available
+- fixed LD A,R clearing I register bug in yaze simz80
+
+planned for the far future:
+- OPL3, OPL4, AY, MP3 sound
+- GFX9000 "lite" emulation
+- Network
+

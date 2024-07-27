@@ -1,0 +1,232 @@
+SymbOS-VM Register Listing - by insane/rabenauge^tSCc
+
+WIP 20230727
+
+Memory Address Space:
+  $000000-$3FFFFF
+
+Z80 Address Space:
+  $0000-$3FFF: Z80 RAM Bank #0, banked via Port I/O $00
+  $4000-$7FFF: Z80 RAM Bank #1, banked via Port I/O $01
+  $8000-$BFFF: Z80 RAM Bank #2, banked via Port I/O $02
+  $C000-$FFFF: Z80 RAM Bank #3, banked via Port I/O $03
+
+I/O Ports (Ports in HEX):
+-----+----------------------------------------------------------------+
+00 RW|Z80 Bank $0000-$3FFF, default $00=$000000                       |P_BANK0
+01 RW|Z80 Bank $4000-$7FFF, default $01=$004000                       |P_BANK1
+02 RW|Z80 Bank $8000-$BFFF, default $02=$008000                       |P_BANK2
+03 RW|Z80 Bank $C000-$FFFF, default $03=$00C000                       |P_BANK3
+-----+----------------------------------------------------------------+
+04 RW|Mem Pointer 1 low-byte   $....XX                                |P_MEMPTR1_L
+05 RW|Mem Pointer 1 high-byte  $..XX..                                |P_MEMPTR1_H
+06 RW|Mem Pointer 1 upper-byte $XX....                                |P_MEMPTR1_U
+07 RW|Mem Pointer 1 R/W (--MEMPTR1)                                   |P_MEMACC1DB
+08 RW|Mem Pointer 1 R/W (MEMPTR1)                                     |P_MEMACC1
+09 RW|Mem Pointer 1 R/W (MEMPTR1++)                                   |P_MEMACC1IA
+-----+----------------------------------------------------------------+
+0A RW|Mem Pointer 2 low-byte   $....XX                                |P_MEMPTR2_L
+0B RW|Mem Pointer 2 high-byte  $..XX..                                |P_MEMPTR2_H
+0C RW|Mem Pointer 2 upper-byte $XX....                                |P_MEMPTR2_U
+0D RW|Mem Pointer 2 R/W (--MEMPTR2)                                   |P_MEMACC2DB
+0E RW|Mem Pointer 2 R/W (MEMPTR2)                                     |P_MEMACC2
+0F RW|Mem Pointer 2 R/W (MEMPTR2++)                                   |P_MEMACC2IA
+-----+----------------------------------------------------------------+
+10  W|VM Exit, write anyting to exit                                  |P_EXIT
+11  W|STDOUT Character Write                                          |P_CONOUT
+12 RW|Beeper, 0=off, $04..$FF=Note, $04=A-1 $08=A#1 $34=A-2 $FC=B-6   |P_BEEP
+-----+----------------------------------------------------------------+
+14  W|Start Keyboard Reading (Set to 0 to start at first scancode)    |P_KEYSCAN
+14 R |Read Keyboard, get first pressed scancode, 0=no further keys    |P_KEYSCAN
+-----+----------------------------------------------------------------+
+15  W|start CPU usage measurement, reset counter, set running=1       |P_USEDCPUSTART
+15 R |is CPU usage measurement running 1=yes                          |P_USEDCPURUNNING
+16  W|stop CPU usage measurement, write CPU usage                     |P_USEDCPUSTOP
+16 R |CPU usage, 0-100=0..100%                                        |P_USEDCPU
+-----+----------------------------------------------------------------+
+18  W|DMA Copy Length, Lobyte                                         |P_MEMDMA_L
+19  W|DMA Copy Length, Hibyte + Start Copy from Memptr1 to Memptr2    |P_MEMDMA_H
+     |DMA Len=0? -> DMA Len=65536                                     |
+-----+----------------------------------------------------------------+
+1C R |RTC Control                                  BIT 7 6 5 4 3 2 1 0|P_RTCCTRL
+     |                                                 0 0 0 0 0 0 : :|
+     |- RTC writeable ---------------------------------------------+ :|D_RTCWRT(02)
+     |- RTC available -----------------------------------------------+|D_RTCACT(01)
+1C  W|RTC Control                                  BIT 7 6 5 4 3 2 1 0|P_RTCCTRL
+     |                                                 0 0 0 0 0 0 : :|
+     |= Command ---------------------------------------------------+-+|
+     |- 00: set RTC Data Pointer to 0                                 |D_RTCREAD(00)
+     |- 01:*RESERVED*                                                 |
+     |- 10: Load from OS into RTC Data                                |D_RTCLOAD(02)
+     |- 11: Write from RTC Data into OS                               |D_RTCSAVE(03)
+1D RW|RTC Data (auto increment on R+W)                                |P_RTCDATA
+     |all data bytes are binary, NOT bcd!                             |
+     |byte 0: Seconds  00..59                                         |D_RTCSEC(00)
+     |byte 1: Minutes  00..59                                         |D_RTCMIN(01)
+     |byte 2: Hours    00..23                                         |D_RTCHOU(02)
+     |byte 3: Day      00..31                                         |D_RTCDAY(03)
+     |byte 4: Month    01..12                                         |D_RTCMON(04)
+     |byte 5: Year.Lo  0000..9999                                     |D_RTCYLO(05)
+     |byte 6: Year.Hi                                                 |D_RTCYHI(06)
+     |byte 7: -                                                       |
+-----+----------------------------------------------------------------+
+1F  W|DEBUG Hex Write                                                 |P_DEBOUT
+-----+----------------------------------------------------------------+
+20  W|Mouse Control                                BIT 7 6 5 4 3 2 1 0|P_MOUSECTRL
+     |                                                 0 0 0 0 0 0 : :|
+     |= Command ---------------------------------------------------+-+|
+     |- 00:Update Mouse: Read Mouse Status from System                |D_MOUSEUPDATE(00)
+     |- 01:*RESERVED*                                                 |
+     |- 10:Disable Mouse (Release Mouse; Disable SDL Relative Mouse)  |D_MOUSEOFF(02)
+     |- 11:Enable Mouse  (Capture Mouse; Enable  SDL Relative Mouse)  |D_MOUSEON(03)
+21 R |Mouse X relative position,signed                                |P_MOUSEX
+22 R |Mouse Y relative position,signed                                |P_MOUSEY
+23 R |Mouse Buttons                                BIT 7 6 5 4 3 2 1 0|P_MOUSEB
+     |                                                 0 0 0 : : : : :|
+     |- Scroll Wheel Down------------------------------------+ : : : :|D_MBWHEELDOWN(10)
+     |- Scroll Wheel Up ---------------------------------------+ : : :|D_MBWHEELUP(08)
+     |- Middle Button -------------------------------------------+ : :|D_MBMIDDLE(04)
+     |- Right Button ----------------------------------------------+ :|D_MBRIGHT(02)
+     |- Left Button -------------------------------------------------+|D_MBLEFT(01)
+-----+----------------------------------------------------------------+
+24  W|Mouse Pointer X Lo                                              |P_MPTRX_LO
+25  W|Mouse Pointer X Hi                                              |P_MPTRX_HI
+26  W|Mouse Pointer Y Lo                                              |P_MPTRY_LO
+27  W|Mouse Pointer Y Hi                                              |P_MPTRY_HI
+28  W|Mouse Pointer 16x16 Sprite Data Select (8bit pixel data)        |P_MSPRSEL
+29  W|Mouse Pointer 16x16 Sprite Data Read/Write (autoincrement)      |P_MSPRDAT
+     |Mouse Pointer Background Color=0xff                             |
+     |Note: set position x/y to 0xffff to hide mouse                  |
+-----+----------------------------------------------------------------+
+40 RW|Disk DMA Pointer low-byte                                       |P_DSKPTR_L
+41 RW|Disk DMA Pointer high-byte                                      |P_DSKPTR_H
+42 RW|Disk DMA Pointer upper-byte                                     |P_DSKPTR_U
+43 RW|Disk Transfer Sector Count (Sector Size: 512 bytes fixed)       |P_DSKCNT
+44 RW|Disk LBA/Sector Select byte 0                                   |P_DSKLBA_0
+45 RW|Disk LBA/Sector Select byte 1                                   |P_DSKLBA_1
+46 RW|Disk LBA/Sector Select byte 2                                   |P_DSKLBA_2
+47 RW|Disk LBA/Sector Select byte 3                                   |P_DSKLBA_3
+48  W|Disk Transfer Command and Execute            BIT 7 6 5 4 3 2 1 0|P_DSKCMD
+     |                                                 0 0 0 : : : : :|
+     |                                                       : : : : :|
+     |= Command ---------------------------------------------+-+ : : :|
+     |- 00:Get Info / Check if Drive Ready                       : : :|D_DSKINFO(00)
+     |     Status=1 if Drive Ready,P_DSKLBA0-3=Highest Sector    : : :|
+     |- 01:*RESERVED*                                            : : :|
+     |                                                           : : :|
+     |- 10:Read Sectors                                          : : :|D_DSKREAD(10)
+     |     Status=1 if OK, 0 if Read Error                       : : :|
+     |- 11:Write Sectors                                         : : :|D_DSKWRITE(18)
+     |     Status=1 if OK, 0 if Write Error                      : : :|
+     |- Drive Select (0-7) --------------------------------------+-+-+|
+48 R |Disk Command Status                          BIT 7 6 5 4 3 2 1 0|P_DSKCMD
+     |                                                 : 0 0 0 0 0 0 :|
+     |- 1: DMA Busy -----------------------------------+             :|D_DSKBUSY(80)
+     |  Always 0 in SYMBOSVM, Z80 is halted during disk dma          :|
+     |- 1: Last Command OK, 0: I/O Error ----------------------------+|D_DSKOK(01)
+-----+----------------------------------------------------------------+
+50 RW|Video Pointer low-byte                                          |P_VIDPTR_L
+51 RW|Video Pointer high-byte                                         |P_VIDPTR_H
+52 RW|Video Pointer upper-byte                                        |P_VIDPTR_U
+53 RW|Video X Resolution low-byte                                     |P_VIDRESX_L
+54 RW|Video X Resolution high-byte                                    |P_VIDRESX_H
+55 RW|Video Y Resolution low-byte                                     |P_VIDRESY_L
+56 RW|Video Y Resolution high-byte                                    |P_VIDRESY_H
+57 RW|Video Mode                                   BIT 7 6 5 4 3 2 1 0|P_VIDMODE
+     |                                                 0 0 0 0 : : : :| 
+     |= Video Modes -------------------------------------------+-+-+-+| 
+     |  All Text Modes Lines are 256 byte wide in memory!             | 
+     |  Mono Pal 0=back, Pal 1=fore                                   | 
+     |- 0:Text Mode mono, 8x8 Font                                    |D_VIDTXT8X8(00)
+     |- 1:Text Mode mono, 8x16 Font                                   |D_VIDTXT8X16(01)
+     |- 2-7: reserved                                                 | 
+     |- 8:4bit Graphics Mode 01                                       |D_VIDGFX4BPP(08)
+     |    Upper Nibble=Even Pixels, Lower Nibble=Odd Pixels           | 
+     |- 9:2bit CPC Graphics Mode                                      |D_VIDGFX2CPC(09)
+     |- A:8bit Graphics mode                                          |D_VIDGFX8BPP(0A)
+     |- B-F: reserved                                                 | 
+-----+----------------------------------------------------------------+
+5A  W|CHR RAM Font Select 0=8x8, 1=8x16                               |P_CHRSEL
+5B  W|CHR RAM Data, auto increments after read/write                  |P_CHRDAT
+-----+----------------------------------------------------------------+
+5C RW|Palette Color Select                                            |P_PALSEL
+5D RW|Palette Selected Red Color                                      |P_PALR
+5E RW|Palette Selected Green Color                                    |P_PALG
+5F RW|Palette Selected Blue Color                                     |P_PALB
+-----+----------------------------------------------------------------+
+60*RW|G9K-EMU:VRAM                                                    |
+61*RW|G9K-EMU:PALETTE                                                 |
+62*RW|G9K-EMU:CMD_DATA                                                |
+63*RW|G9K-EMU:REG_DATA                                                |
+64* W|G9K-EMU:REG_SELECT                                              |
+65*R |G9K-EMU:STATUS                                                  |
+66*RW|G9K-EMU:INT_FLAG                                                |
+67* W|G9K-EMU:SYS_CTRL                                                |
+6F*RW|G9K-EMU:OUTPUT_CTRL                                             |
+-----+----------------------------------------------------------------+
+7E* W|OPL4-EMU: SELECT WAVETABLE                                      |
+7F* W|OPL4-EMU: DATA   WAVETABLE                                      |
+-----+----------------------------------------------------------------+
+A0* W|YM2149 #1 SEL                                                   |
+A1* W|YM2149 #1 DAT                                                   |
+A2* W|YM2149 #2 SEL                                                   |
+A3* W|YM2149 #2 DAT                                                   |
+-----+----------------------------------------------------------------+
+C4* W|OPL3-EMU: SELECT 0                                              |
+C5* W|OPL3-EMU: DATA   0                                              |
+C6* W|OPL3-EMU: SELECT 1                                              |
+C7* W|OPL3-EMU: DATA   1                                              |
+-----+----------------------------------------------------------------+
+E0  W|Blitter Source Address low-byte                                 |P_BLITSRCA_L
+E1  W|Blitter Source Address high-byte                                |P_BLITSRCA_H
+E2  W|Blitter Source Address upper-byte                               |P_BLITSRCA_U
+E3  W|Blitter Source Line Length in Bytes low-byte                    |P_BLITSRCL_L
+E4  W|Blitter Source Line Length in Bytes high-byte                   |P_BLITSRCL_H
+E5  W|Blitter Source X-Start in Pixels low-byte                       |P_BLITSRCX_L
+E6  W|Blitter Source X-Start in Pixels high-byte                      |P_BLITSRCX_H
+E7  W|Blitter Source Y-Start in Pixels low-byte                       |P_BLITSRCY_L
+E8  W|Blitter Source Y-Start in Pixels high-byte                      |P_BLITSRCY_H
+E9  W|Blitter Destination Address low-byte                            |P_BLITDSTA_L
+EA  W|Blitter Destination Address high-byte                           |P_BLITDSTA_H
+EB  W|Blitter Destination Address upper-byte                          |P_BLITDSTA_U
+EC  W|Blitter Destination Line Length in Bytes low-byte               |P_BLITDSTL_L
+ED  W|Blitter Destination Line Length in Bytes high-byte              |P_BLITDSTL_H
+EE  W|Blitter Destination X-Start in Pixels low-byte                  |P_BLITDSTX_L
+EF  W|Blitter Destination X-Start in Pixels high-byte                 |P_BLITDSTX_H
+F0  W|Blitter Destination Y-Start in Pixels low-byte                  |P_BLITDSTY_L
+F1  W|Blitter Destination Y-Start in Pixels high-byte                 |P_BLITDSTY_H
+F2  W|Blitter X-Size in Pixels low-byte                               |P_BLITSIZX_L
+F3  W|Blitter X-Size in Pixels high-byte                              |P_BLITSIZX_H
+F4  W|Blitter Y-Size in Pixels low-byte                               |P_BLITSIZY_L
+F5  W|Blitter Y-Size in Pixels high-byte                              |P_BLITSIZY_H
+F6  W|Blitter Fill/Skip Color                                         |P_BLITFILL
+F7 R |Blitter Blit Status                          BIT 7 6 5 4 3 2 1 0|P_BLITCTRL
+     |                                                 : 0 0 0 0 0 0 0|
+     |- 1:Blitter Busy --------------------------------+              |D_BLITBUSY(80)
+     |  Always 0 in SYMBOSVM, Z80 is halted during blit               |
+F7  W|Blitter Blit Register                        BIT 7 6 5 4 3 2 1 0|P_BLITCTRL
+     |  write starts blit                              : : : : : : : :| 
+     |- 1:backwards blit X, 0:normal blit X -----------+ : : : : : : :|D_BLITBACKX(80)
+     |- 1:backwards blit Y, 0:normal blit Y -------------+ : : : : : :|D_BLITBACKY(40)
+     |  backwards blit start from source+len-1             : : : : : :| 
+     |= blit mode -----------------------------------------+-+-+ : : :|
+     |- 000:blit (dest)=(src)                                    : : :|D_BMCOPY(00)
+     |- 001:and  (dest)=(dest) and (src)                         : : :|D_BMAND(08)
+     |- 010:or   (dest)=(dest)  or (src)                         : : :|D_BMOR(10)
+     |- 011:xor  (dest)=(dest) xor (src)                         : : :|D_BMXOR(18)
+     |- 100:fill (dest)=fill                                     : : :|D_BMFILL(20)
+     |- 101:skip if(src)<>fill (dest)=(src)                      : : :|D_BMSKIP(28)
+     |- 110:text if(src)<>0 (dest)=fill;DSTX+=SIZX               : : :|D_BMTEXT(30)
+     |- 111:fxor (dest)=(dest) xor fill                          : : :|D_BMFXOR(38)
+     |                                                           : : :| 
+     |= pixel mode ----------------------------------------------+-+-+| 
+     |- 000: 1bit pp src, 4bpp dst b76543210=p01234567                |D_BLITP14(00)
+     |- 001: 2bit pp src, 4bpp dst b76543210=p0123                    |D_BLITP24(01)
+     |- 010: 4bit pp src, 4bpp dst b76543210=p01                      |D_BLITP44(02)
+     |- 011: 8bit pp src, 4bpp dst pack 2 8bit pix&15 into 4bit       |D_BLITP84(03)
+     |- 100: 1bit pp src, 8bpp dst                                    |D_BLITP18(04)
+     |- 101: 2bit pp src, 8bpp dst                                    |D_BLITP28(05)
+     |- 110: 4bit pp src, 8bpp dst                                    |D_BLITP48(06)
+     |- 111: 8bit pp src, 8bpp dst                                    |D_BLITP88(07)
+-----+----------------------------------------------------------------+
+XX*  = not implemented yet
