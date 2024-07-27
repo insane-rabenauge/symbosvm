@@ -46,26 +46,22 @@ int drive_getinfo(int drive,uint32_t* seccnt) {
 };
 
 int drive_read(int drive,int seccnt,uint32_t lbasec,uint32_t dmaptr) {
-//  printf("DEBUG DRIVE %i: RD %i SECTORS FROM LBA %08X TO MEM %06X\n",drive,seccnt,lbasec,dmaptr);
   if (drive>MAX_DRIVES) return 0;
   if (!drives[drive].ready) return 0;
   uint64_t seekptr=(uint64_t)lbasec*SECTOR_SIZE;
   if (OS_FSEEK(drives[drive].fp,seekptr,SEEK_SET)!=0) return 0;
   if ((dmaptr+(seccnt*SECTOR_SIZE))>MEM_SIZE) return 0;
   drvstat=fread(&z80_mem[dmaptr],SECTOR_SIZE,seccnt,drives[drive].fp);
-//  printf("DEBUG DRIVE %i, RD %08X BYTES OK\n",drive,drvstat*SECTOR_SIZE);
   return 1;
 };
 
 int drive_write(int drive,int seccnt,uint32_t lbasec,uint32_t dmaptr) {
-//  printf("DEBUG DRIVE %i: WR %i SECTORS FROM LBA %08X to MEM %06X\n",drive,seccnt,lbasec,dmaptr);
   if (drive>MAX_DRIVES) return 0;
   if (!drives[drive].ready) return 0;
   uint64_t seekptr=(uint64_t)lbasec*SECTOR_SIZE;
   if (OS_FSEEK(drives[drive].fp,seekptr,SEEK_SET)!=0) return 0;
   if ((dmaptr+(seccnt*SECTOR_SIZE))>MEM_SIZE) return 0;
   drvstat=fwrite(&z80_mem[dmaptr],SECTOR_SIZE,seccnt,drives[drive].fp);
-//  printf("DEBUG DRIVE %i, WD %08X BYTES OK\n",drive,drvstat*SECTOR_SIZE);
   return 1;
 };
 

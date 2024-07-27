@@ -49,7 +49,7 @@ all:	$(TARGET)
 
 .PHONY:	run
 run:	$(TARGET)
-	./$(TARGET)
+	cd $(TARGETDIR) && ./$(APP)
 
 .PHONY: clean
 clean:	

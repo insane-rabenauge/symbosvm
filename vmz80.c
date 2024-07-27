@@ -13,7 +13,7 @@
 #include "video.h"
 #include "config.h"
 
-int z80_usage=0;
+volatile uint32_t ticks_framestart=0;
 
 int init_z80() {
   for (int bank=0;bank<4;bank++) simz80_setbank(bank,bank);
@@ -28,11 +28,9 @@ int init_z80() {
 int run_z80() {
   while(!sys_quit) {
     z80_run=1;
-//    uint64_t pbeg=SDL_GetPerformanceCounter();
+    ticks_framestart=system_gettickus();
     simz80_run();
-//    uint64_t pend=SDL_GetPerformanceCounter();
     if(!sys_timer_irq)system_waitfortimer();
-//    uint64_t psyn=SDL_GetPerformanceCounter();
     sys_timer_irq=0;
     simz80_irq(sys_timer_vector);
     if (!var_system_clionly) {
@@ -40,9 +38,6 @@ int run_z80() {
       audio_update();
       system_update();
     };
-//    double msmid=(double)((pend-pbeg)*1000)/SDL_GetPerformanceFrequency();
-//    double msend=(double)((psyn-pbeg)*1000)/SDL_GetPerformanceFrequency();
-//    z80_usage=msmid*100/msend;
   };
   return 1;
 };

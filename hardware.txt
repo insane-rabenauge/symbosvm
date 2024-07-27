@@ -39,10 +39,9 @@ I/O Ports (Ports in HEX):
 14  W|Start Keyboard Reading (Set to 0 to start at first scancode)    |P_KEYSCAN
 14 R |Read Keyboard, get first pressed scancode, 0=no further keys    |P_KEYSCAN
 -----+----------------------------------------------------------------+
-15  W|start CPU usage measurement, reset counter, set running=1       |P_USEDCPUSTART
-15 R |is CPU usage measurement running 1=yes                          |P_USEDCPURUNNING
-16  W|stop CPU usage measurement, write CPU usage                     |P_USEDCPUSTOP
-16 R |CPU usage, 0-100=0..100%                                        |P_USEDCPU
+15  R|CPU usage in uS since start of frame, low-byte, latched on read |P_USEDCPU_L
+16  R|CPU usage in uS since start of frame, high-byte                 |P_USEDCPU_H
+     |CPU usage: current time inside frame in us / 64                 |
 -----+----------------------------------------------------------------+
 18  W|DMA Copy Length, Lobyte                                         |P_MEMDMA_L
 19  W|DMA Copy Length, Hibyte + Start Copy from Memptr1 to Memptr2    |P_MEMDMA_H
@@ -133,18 +132,18 @@ I/O Ports (Ports in HEX):
 55 RW|Video Y Resolution low-byte                                     |P_VIDRESY_L
 56 RW|Video Y Resolution high-byte                                    |P_VIDRESY_H
 57 RW|Video Mode                                   BIT 7 6 5 4 3 2 1 0|P_VIDMODE
-     |                                                 0 0 0 0 : : : :| 
-     |= Video Modes -------------------------------------------+-+-+-+| 
-     |  All Text Modes Lines are 256 byte wide in memory!             | 
-     |  Mono Pal 0=back, Pal 1=fore                                   | 
+     |                                                 0 0 0 0 : : : :|
+     |= Video Modes -------------------------------------------+-+-+-+|
+     |  All Text Modes Lines are 256 byte wide in memory!             |
+     |  Mono Pal 0=back, Pal 1=fore                                   |
      |- 0:Text Mode mono, 8x8 Font                                    |D_VIDTXT8X8(00)
      |- 1:Text Mode mono, 8x16 Font                                   |D_VIDTXT8X16(01)
-     |- 2-7: reserved                                                 | 
+     |- 2-7: reserved                                                 |
      |- 8:4bit Graphics Mode 01                                       |D_VIDGFX4BPP(08)
-     |    Upper Nibble=Even Pixels, Lower Nibble=Odd Pixels           | 
+     |    Upper Nibble=Even Pixels, Lower Nibble=Odd Pixels           |
      |- 9:2bit CPC Graphics Mode                                      |D_VIDGFX2CPC(09)
      |- A:8bit Graphics mode                                          |D_VIDGFX8BPP(0A)
-     |- B-F: reserved                                                 | 
+     |- B-F: reserved                                                 |
 -----+----------------------------------------------------------------+
 5A  W|CHR RAM Font Select 0=8x8, 1=8x16                               |P_CHRSEL
 5B  W|CHR RAM Data, auto increments after read/write                  |P_CHRDAT
@@ -230,3 +229,5 @@ F7  W|Blitter Blit Register                        BIT 7 6 5 4 3 2 1 0|P_BLITCTR
      |- 111: 8bit pp src, 8bpp dst                                    |D_BLITP88(07)
 -----+----------------------------------------------------------------+
 XX*  = not implemented yet
+TODO: cpu usage, needs halt inside symbos idle thread
+

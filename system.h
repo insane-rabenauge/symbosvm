@@ -20,6 +20,8 @@ void system_waitfortimer();
 void system_rtcload();
 void system_rtcsave();
 
+uint32_t system_gettickus();
+
 extern volatile int sys_timer_irq;
 extern int sys_quit;
 extern const int sys_timer_freq;

@@ -33,18 +33,18 @@ void video_update() {
     int chry=var_video_vmresy/8;
     for (int ty=0;ty<chry;ty++) {
       for (int tx=0;tx<chrx;tx++) {
-	int ch=z80_mem[video_ptr+(ty*256)+tx];
+        int ch=z80_mem[video_ptr+(ty*256)+tx];
 
-	for (int cy=0;cy<8;cy++) {
-	  int vidofs=var_video_vmresx*(ty*8+cy)+(tx*8);
-	  int bmp=video_font8x8[ch*8+cy];
-	  sys_vidbuf[vidofs++]=(bmp&0x80)?1:0;
-	  sys_vidbuf[vidofs++]=(bmp&0x40)?1:0;
-	  sys_vidbuf[vidofs++]=(bmp&0x20)?1:0;
-	  sys_vidbuf[vidofs++]=(bmp&0x10)?1:0;
-	  sys_vidbuf[vidofs++]=(bmp&0x08)?1:0;
-	  sys_vidbuf[vidofs++]=(bmp&0x04)?1:0;
-	};
+        for (int cy=0;cy<8;cy++) {
+          int vidofs=var_video_vmresx*(ty*8+cy)+(tx*8);
+          int bmp=video_font8x8[ch*8+cy];
+          sys_vidbuf[vidofs++]=(bmp&0x80)?1:0;
+          sys_vidbuf[vidofs++]=(bmp&0x40)?1:0;
+          sys_vidbuf[vidofs++]=(bmp&0x20)?1:0;
+          sys_vidbuf[vidofs++]=(bmp&0x10)?1:0;
+          sys_vidbuf[vidofs++]=(bmp&0x08)?1:0;
+          sys_vidbuf[vidofs++]=(bmp&0x04)?1:0;
+        };
       };
     };
   } else if (video_mode==D_VIDTXT8X16) {
@@ -52,18 +52,18 @@ void video_update() {
     int chry=var_video_vmresy/16;
     for (int ty=0;ty<chry;ty++) {
       for (int tx=0;tx<chrx;tx++) {
-	int ch=z80_mem[video_ptr+(ty*256)+tx];
+        int ch=z80_mem[video_ptr+(ty*256)+tx];
 
-	for (int cy=0;cy<16;cy++) {
-	  int vidofs=var_video_vmresx*(ty*16+cy)+(tx*8);
-	  int bmp=video_font8x16[ch*16+cy];
-	  sys_vidbuf[vidofs++]=(bmp&0x80)?1:0;
-	  sys_vidbuf[vidofs++]=(bmp&0x40)?1:0;
-	  sys_vidbuf[vidofs++]=(bmp&0x20)?1:0;
-	  sys_vidbuf[vidofs++]=(bmp&0x10)?1:0;
-	  sys_vidbuf[vidofs++]=(bmp&0x08)?1:0;
-	  sys_vidbuf[vidofs++]=(bmp&0x04)?1:0;
-	};
+        for (int cy=0;cy<16;cy++) {
+          int vidofs=var_video_vmresx*(ty*16+cy)+(tx*8);
+          int bmp=video_font8x16[ch*16+cy];
+          sys_vidbuf[vidofs++]=(bmp&0x80)?1:0;
+          sys_vidbuf[vidofs++]=(bmp&0x40)?1:0;
+          sys_vidbuf[vidofs++]=(bmp&0x20)?1:0;
+          sys_vidbuf[vidofs++]=(bmp&0x10)?1:0;
+          sys_vidbuf[vidofs++]=(bmp&0x08)?1:0;
+          sys_vidbuf[vidofs++]=(bmp&0x04)?1:0;
+        };
       };
     };
   } else if (video_mode==D_VIDGFX4BPP) {
@@ -71,10 +71,10 @@ void video_update() {
     int vidwr=0;
     for (int py=0;py<var_video_vmresy;py++) {
       for (int px=0;px<var_video_vmresx/2;px++) {
-	int pix=z80_mem[vidrd];
-	sys_vidbuf[vidwr+0]=(pix>>4)&15;
-	sys_vidbuf[vidwr+1]=(pix>>0)&15;
-	vidrd+=1;vidwr+=2;
+        int pix=z80_mem[vidrd];
+        sys_vidbuf[vidwr+0]=(pix>>4)&15;
+        sys_vidbuf[vidwr+1]=(pix>>0)&15;
+        vidrd+=1;vidwr+=2;
       };
     };
   } else if (video_mode==D_VIDGFX8BPP) {
@@ -89,11 +89,11 @@ void video_update() {
       vidrd=video_ptr+((ly>>3)*80)+((ly&7)<<11);
       vidwr=var_video_vmresx*(vidofsy+ly)+vidofsx;
       for (int lx=0;lx<320/4;lx++) {
-	int pix=z80_mem[vidrd++];
-	sys_vidbuf[vidwr++]=((pix&0x80)>>7)|((pix&0x08)>>2);
-	sys_vidbuf[vidwr++]=((pix&0x40)>>6)|((pix&0x04)>>1);
-	sys_vidbuf[vidwr++]=((pix&0x20)>>5)|((pix&0x02)   );
-	sys_vidbuf[vidwr++]=((pix&0x10)>>4)|((pix&0x01)<<1);
+        int pix=z80_mem[vidrd++];
+        sys_vidbuf[vidwr++]=((pix&0x80)>>7)|((pix&0x08)>>2);
+        sys_vidbuf[vidwr++]=((pix&0x40)>>6)|((pix&0x04)>>1);
+        sys_vidbuf[vidwr++]=((pix&0x20)>>5)|((pix&0x02)   );
+        sys_vidbuf[vidwr++]=((pix&0x10)>>4)|((pix&0x01)<<1);
       };
     };
   } else {
@@ -103,14 +103,14 @@ void video_update() {
   if (sys_mouseon) {
     for (int y=0;y<16;y++) {
       for (int x=0;x<16;x++) {
-	int drwx=video_mptrx+x;
-	int drwy=video_mptry+y;
-	if ((drwy<var_video_vmresy)&&(drwy>=0)) {
-	  if ((drwx<var_video_vmresx)&&(drwx>=0)) {
-	    int8_t mp=video_ptrgfx[y*16+x];
-	    if (mp>=0) sys_vidbuf[drwy*var_video_vmresx+drwx]=mp;
-	  };
-	};
+        int drwx=video_mptrx+x;
+        int drwy=video_mptry+y;
+        if ((drwy<var_video_vmresy)&&(drwy>=0)) {
+          if ((drwx<var_video_vmresx)&&(drwx>=0)) {
+            int8_t mp=video_ptrgfx[y*16+x];
+            if (mp>=0) sys_vidbuf[drwy*var_video_vmresx+drwx]=mp;
+          };
+        };
       };
     };
   };

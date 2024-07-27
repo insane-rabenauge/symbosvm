@@ -55,6 +55,11 @@ char keystate[SDL_NUM_SCANCODES];
 uint8_t* sys_vidbuf;
 SDL_Rect screen_rect;
 
+uint32_t system_gettickus() {
+  uint64_t sdl_us=SDL_GetPerformanceCounter()/(SDL_GetPerformanceFrequency()/1000000);
+  return sdl_us;
+};
+
 void system_rtcload(void) {
   time_t t = time(NULL);
   struct tm tm = *localtime(&t);

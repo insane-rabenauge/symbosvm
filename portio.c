@@ -20,8 +20,9 @@
 
 uint32_t memptr1=0,memptr2=0,dmaptr=0,dsklba=0;
 int memdma=0;
-uint8_t	palsel=0,seccnt=0,rtcsel=0;
+uint8_t palsel=0,seccnt=0,rtcsel=0;
 int chrptr=0,fntsel=0,dskstat=0,drive=0;
+uint16_t ticks_lines;
 
 void printpc(unsigned int PC) {
   int pcb=(simz80_getbank((PC>>14)&3))*0x4000;
@@ -89,8 +90,12 @@ int z80_in(unsigned int port, unsigned int PC) {
     case P_KEYSCAN:
       return(system_scankey());
       break;
-    case P_USEDCPU:
-      return(z80_usage);
+    case P_USEDCPU_L:
+      ticks_lines=(ticks_framestart-system_gettickus())>>6;
+      return(ticks_lines&0xff);
+      break;
+    case P_USEDCPU_H:
+      return((ticks_lines>>8)&0xff);
       break;
     case P_RTCCTRL:
       return(system_rtcstat);
@@ -259,17 +264,17 @@ void z80_out(unsigned int port, unsigned int value, unsigned int PC) {
       break;
     case P_RTCCTRL:
       switch (value&3) {
-	case D_RTCREAD:
-	  rtcsel=0;
-	  break;
-	case 1:
-	  break;
-	case D_RTCLOAD:
-	  system_rtcload();
-	  break;
-	case D_RTCSAVE:
-	  system_rtcsave();
-	  break;
+        case D_RTCREAD:
+          rtcsel=0;
+          break;
+        case 1:
+          break;
+        case D_RTCLOAD:
+          system_rtcload();
+          break;
+        case D_RTCSAVE:
+          system_rtcsave();
+          break;
       };
       break;
     case P_RTCDATA:
@@ -278,17 +283,17 @@ void z80_out(unsigned int port, unsigned int value, unsigned int PC) {
       break;
     case P_MOUSECTRL:
       switch (value&3) {
-	case D_MOUSEUPDATE:
+        case D_MOUSEUPDATE:
           system_update_mouse();
-	  break;
-	case 1:
-	  break;
-	case D_MOUSEOFF:
-	  system_capturemouse(0);
-	  break;
-	case D_MOUSEON:
-	  system_capturemouse(1);
-	  break;
+          break;
+        case 1:
+          break;
+        case D_MOUSEOFF:
+          system_capturemouse(0);
+          break;
+        case D_MOUSEON:
+          system_capturemouse(1);
+          break;
       };
       break;
     case P_MPTRX_LO:
@@ -336,15 +341,15 @@ void z80_out(unsigned int port, unsigned int value, unsigned int PC) {
     case P_DSKCMD:
       drive=value&7;
       switch (value&0b11000) {
-	case D_DSKINFO:
-	  dskstat=drive_getinfo(drive,&dsklba);
-	  break;
-	case D_DSKREAD:
-	  dskstat=drive_read(drive,seccnt,dsklba,dmaptr);
-	  break;
-	case D_DSKWRITE:
-	  dskstat=drive_write(drive,seccnt,dsklba,dmaptr);
-	  break;
+        case D_DSKINFO:
+          dskstat=drive_getinfo(drive,&dsklba);
+          break;
+        case D_DSKREAD:
+          dskstat=drive_read(drive,seccnt,dsklba,dmaptr);
+          break;
+        case D_DSKWRITE:
+          dskstat=drive_write(drive,seccnt,dsklba,dmaptr);
+          break;
       };
       break;
     case P_VIDPTR_L:
@@ -379,10 +384,10 @@ void z80_out(unsigned int port, unsigned int value, unsigned int PC) {
     case P_CHRDAT:
       if (fntsel==0) {
         chrptr&=((256*8)-1);
-	video_font8x8[chrptr++]=value;
+        video_font8x8[chrptr++]=value;
       } else if (fntsel==1) {
         chrptr&=((256*16)-1);
-	video_font8x16[chrptr++]=value;
+        video_font8x16[chrptr++]=value;
       };
       break;
     case P_PALSEL:

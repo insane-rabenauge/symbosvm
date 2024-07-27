@@ -18,10 +18,8 @@
 #define P_CONOUT 0x11
 #define P_BEEP 0x12
 #define P_KEYSCAN 0x14
-#define P_USEDCPUSTART 0x15
-#define P_USEDCPURUNNING 0x15
-#define P_USEDCPUSTOP 0x16
-#define P_USEDCPU 0x16
+#define P_USEDCPU_L 0x15
+#define P_USEDCPU_H 0x16
 #define P_MEMDMA_L 0x18
 #define P_MEMDMA_H 0x19
 #define P_RTCCTRL 0x1C

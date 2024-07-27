@@ -36,38 +36,38 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA. */
 #include "simz80.h"
 
 #if UINT_MAX >= 65535
-typedef unsigned int	FASTREG;
+typedef unsigned int    FASTREG;
 #else
-typedef unsigned long	FASTREG;
+typedef unsigned long   FASTREG;
 #endif
 #if UINT_MAX > 65535
-typedef unsigned int	FASTWORK;
+typedef unsigned int    FASTWORK;
 #else
-typedef unsigned long	FASTWORK;
+typedef unsigned long   FASTWORK;
 #endif
 
-typedef uint8_t		BYTE;
-typedef uint16_t	WORD;
-typedef uint32_t	ui32;
-typedef int32_t		i32;
+typedef uint8_t         BYTE;
+typedef uint16_t        WORD;
+typedef uint32_t        ui32;
+typedef int32_t         i32;
 
-#define FLAG_C	1
-#define FLAG_N	2
-#define FLAG_P	4
-#define FLAG_H	16
-#define FLAG_Z	64
-#define FLAG_S	128
+#define FLAG_C  1
+#define FLAG_N  2
+#define FLAG_P  4
+#define FLAG_H  16
+#define FLAG_Z  64
+#define FLAG_S  128
 
-#define SETFLAG(f,c)	AF = (c) ? AF | FLAG_ ## f : AF & ~FLAG_ ## f
-#define TSTFLAG(f)	((AF & FLAG_ ## f) != 0)
+#define SETFLAG(f,c)    AF = (c) ? AF | FLAG_ ## f : AF & ~FLAG_ ## f
+#define TSTFLAG(f)      ((AF & FLAG_ ## f) != 0)
 
-#define ldig(x)		((x) & 0xf)
-#define hdig(x)		(((x)>>4)&0xf)
-#define lreg(x)		((x)&0xff)
-#define hreg(x)		(((x)>>8)&0xff)
+#define ldig(x)         ((x) & 0xf)
+#define hdig(x)         (((x)>>4)&0xf)
+#define lreg(x)         ((x)&0xff)
+#define hreg(x)         (((x)>>8)&0xff)
 
-#define Setlreg(x, v)	x = (((x)&0xff00) | ((v)&0xff))
-#define Sethreg(x, v)	x = (((x)&0xff) | (((v)&0xff) << 8))
+#define Setlreg(x, v)   x = (((x)&0xff00) | ((v)&0xff))
+#define Sethreg(x, v)   x = (((x)&0xff) | (((v)&0xff) << 8))
 
 static WORD reg_af[2];
 static int reg_af_sel;
@@ -115,8 +115,8 @@ static INLINE void z80_writew(FASTWORK address, FASTWORK value) {
   z80_bank[(address+1)>>BANK_SHIFT][(address+1)&BANK_MASK]=value>>8;
 };
 
-#define Input(port)	z80_in(port,READPC)
-#define Output(p,v)	z80_out(p,v,READPC)
+#define Input(port)     z80_in(port,READPC)
+#define Output(p,v)     z80_out(p,v,READPC)
 #define GetBYTE(a)      z80_read(a)
 #define GetBYTE_pp(a)   z80_read(a++)
 #define GetBYTE_mm(a)   z80_read(a--)
@@ -212,7 +212,7 @@ int simz80_run(void) {
   CHECK_IRQ();
 
   while (z80_run) {
-    READPC=PC; 		// DEBOUT SUPPORT
+    READPC=PC;          // DEBOUT SUPPORT
     switch(GetBYTE_pp(PC)) {
       case 0x00:      /* NOP */
         break;
@@ -2135,7 +2135,7 @@ int simz80_run(void) {
           case 0x66:
           case 0x6E:
             /* interrupt mode 0 */
-	    reg_im=0;
+            reg_im=0;
             break;
           case 0x47:      /* LD I,A */
             reg_ir = (reg_ir & 255) | (AF & ~255);
@@ -2198,7 +2198,7 @@ int simz80_run(void) {
           case 0x56:      /* IM 1 */
           case 0x76:
             /* interrupt mode 1 */
-	    reg_im=1;
+            reg_im=1;
             break;
           case 0x57:      /* LD A,I */
             AF = (AF & 0x29) | (reg_ir & ~255) | ((reg_ir >> 8) & 0x80) | (((reg_ir & ~255) == 0) << 6) | ((reg_IFF & 2) << 1);
@@ -2232,7 +2232,7 @@ int simz80_run(void) {
           case 0x5E:      /* IM 2 */
           case 0x7E:
             /* interrupt mode 2 */
-	    reg_im=2;
+            reg_im=2;
             break;
           case 0x5F:      /* LD A,R */
             reg_ir = ((reg_ir)&0xff00) | (rand() & 0xff);
@@ -2578,7 +2578,7 @@ int simz80_run(void) {
         break;
       case 0xFB:      /* EI */
         reg_IFF = 3;
-	if (GetBYTE(PC)==0xC9) POP(PC);//RET
+        if (GetBYTE(PC)==0xC9) POP(PC);//RET
         CHECK_IRQ();
         break;
       case 0xFC:      /* CALL M,nnnn */
