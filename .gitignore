@@ -1,0 +1,10 @@
+old/
+bin/
+obj/
+*.o
+*.d
+*.exe
+release.h
+/symbosvm
+/symbosvm.bin
+/SDL2.dll
