@@ -44,6 +44,8 @@ void video_update() {
           sys_vidbuf[vidofs++]=(bmp&0x10)?1:0;
           sys_vidbuf[vidofs++]=(bmp&0x08)?1:0;
           sys_vidbuf[vidofs++]=(bmp&0x04)?1:0;
+          sys_vidbuf[vidofs++]=(bmp&0x02)?1:0;
+          sys_vidbuf[vidofs++]=(bmp&0x01)?1:0;
         };
       };
     };
@@ -63,6 +65,8 @@ void video_update() {
           sys_vidbuf[vidofs++]=(bmp&0x10)?1:0;
           sys_vidbuf[vidofs++]=(bmp&0x08)?1:0;
           sys_vidbuf[vidofs++]=(bmp&0x04)?1:0;
+          sys_vidbuf[vidofs++]=(bmp&0x02)?1:0;
+          sys_vidbuf[vidofs++]=(bmp&0x01)?1:0;
         };
       };
     };
