@@ -21,10 +21,10 @@ uint16_t video_mptrx;
 uint16_t video_mptry;
 uint8_t video_txtcurx;
 uint8_t video_txtcury;
-uint8_t video_ptrgfx[256];
 
 int video_mode=0;
 
+uint8_t video_ptrgfx[256];
 uint8_t video_font8x8[256*8];
 uint8_t video_font8x16[256*16];
 uint8_t video_cursor[16];
