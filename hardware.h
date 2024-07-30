@@ -53,8 +53,6 @@
 #define P_MPTRX_HI 0x25
 #define P_MPTRY_LO 0x26
 #define P_MPTRY_HI 0x27
-#define P_MSPRSEL 0x28
-#define P_MSPRDAT 0x29
 #define P_DSKPTR_L 0x40
 #define P_DSKPTR_H 0x41
 #define P_DSKPTR_U 0x42
@@ -82,7 +80,13 @@
 #define D_VIDGFX4BPP 0x08
 #define D_VIDGFX2CPC 0x09
 #define D_VIDGFX8BPP 0x0A
+#define P_TXTCURX 0x58
+#define P_TXTCURY 0x59
 #define P_CHRSEL 0x5A
+#define D_CHRFNT8X8 0x00
+#define D_CHRFNT8X16 0x01
+#define D_CHRFNTCUR 0x02
+#define D_CHRFNTPTR 0x03
 #define P_CHRDAT 0x5B
 #define P_PALSEL 0x5C
 #define P_PALR 0x5D

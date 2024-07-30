@@ -34,7 +34,7 @@ I/O Ports (Ports in HEX):
 -----+----------------------------------------------------------------+
 10  W|VM Exit, write anyting to exit                                  |P_EXIT
 11  W|STDOUT Character Write                                          |P_CONOUT
-12 RW|Beeper, 0=off, $04..$FF=Note, $04=A-1 $08=A#1 $34=A-2 $FC=B-6   |P_BEEP
+12  W|Beeper, 0=off, $04..$FF=Note, $04=A-1 $08=A#1 $34=A-2 $FC=B-6   |P_BEEP
 -----+----------------------------------------------------------------+
 14  W|Start Keyboard Reading (Set to 0 to start at first scancode)    |P_KEYSCAN
 14 R |Read Keyboard, get first pressed scancode, 0=no further keys    |P_KEYSCAN
@@ -92,9 +92,7 @@ I/O Ports (Ports in HEX):
 25  W|Mouse Pointer X Hi                                              |P_MPTRX_HI
 26  W|Mouse Pointer Y Lo                                              |P_MPTRY_LO
 27  W|Mouse Pointer Y Hi                                              |P_MPTRY_HI
-28  W|Mouse Pointer 16x16 Sprite Data Select (8bit pixel data)        |P_MSPRSEL
-29  W|Mouse Pointer 16x16 Sprite Data Read/Write (autoincrement)      |P_MSPRDAT
-     |Mouse Pointer Background Color=0xff                             |
+     |Mouse Pointer Background Color=0xff, use CHRSEL to write        |
      |Note: set position x/y to 0xffff to hide mouse                  |
 -----+----------------------------------------------------------------+
 40 RW|Disk DMA Pointer low-byte                                       |P_DSKPTR_L
@@ -145,7 +143,16 @@ I/O Ports (Ports in HEX):
      |- A:8bit Graphics mode                                          |D_VIDGFX8BPP(0A)
      |- B-F: reserved                                                 |
 -----+----------------------------------------------------------------+
-5A  W|CHR RAM Font Select 0=8x8, 1=8x16                               |P_CHRSEL
+58 RW|Textmode Cursor X-Position                                      |P_TXTCURX
+59 RW|Textmode Cursor Y-Position, 0xff=OFF                            |P_TXTCURY
+-----+----------------------------------------------------------------+
+5A  W|CHR RAM Select                               BIT 7 6 5 4 3 2 1 0|P_CHRSEL
+     |selects RAM and sets write pointer to zero.      0 0 0 0 0 0 : :|
+     |= Font ------------------------------------------------------+-+|
+     |- 0:Write to 8x8 Font RAM, up to 2048 bytes                     |D_CHRFNT8X8(00)
+     |- 1:Write to 8x16 Font RAM, up to 4096 bytes                    |D_CHRFNT8X16(01)
+     |- 2:Write to Cursor RAM, up to 16 bytes                         |D_CHRFNTCUR(02)
+     |- 3:Write to Mouse Pointer RAM, up to 256 bytes                 |D_CHRFNTPTR(03)
 5B  W|CHR RAM Data, auto increments after read/write                  |P_CHRDAT
 -----+----------------------------------------------------------------+
 5C RW|Palette Color Select                                            |P_PALSEL
@@ -204,10 +211,10 @@ F7 R |Blitter Blit Status                          BIT 7 6 5 4 3 2 1 0|P_BLITCTR
      |- 1:Blitter Busy --------------------------------+              |D_BLITBUSY(80)
      |  Always 0 in SYMBOSVM, Z80 is halted during blit               |
 F7  W|Blitter Blit Register                        BIT 7 6 5 4 3 2 1 0|P_BLITCTRL
-     |  write starts blit                              : : : : : : : :| 
+     |  write starts blit                              : : : : : : : :|
      |- 1:backwards blit X, 0:normal blit X -----------+ : : : : : : :|D_BLITBACKX(80)
      |- 1:backwards blit Y, 0:normal blit Y -------------+ : : : : : :|D_BLITBACKY(40)
-     |  backwards blit start from source+len-1             : : : : : :| 
+     |  backwards blit start from source+len-1             : : : : : :|
      |= blit mode -----------------------------------------+-+-+ : : :|
      |- 000:blit (dest)=(src)                                    : : :|D_BMCOPY(00)
      |- 001:and  (dest)=(dest) and (src)                         : : :|D_BMAND(08)
@@ -217,8 +224,8 @@ F7  W|Blitter Blit Register                        BIT 7 6 5 4 3 2 1 0|P_BLITCTR
      |- 101:skip if(src)<>fill (dest)=(src)                      : : :|D_BMSKIP(28)
      |- 110:text if(src)<>0 (dest)=fill;DSTX+=SIZX               : : :|D_BMTEXT(30)
      |- 111:fxor (dest)=(dest) xor fill                          : : :|D_BMFXOR(38)
-     |                                                           : : :| 
-     |= pixel mode ----------------------------------------------+-+-+| 
+     |                                                           : : :|
+     |= pixel mode ----------------------------------------------+-+-+|
      |- 000: 1bit pp src, 4bpp dst b76543210=p01234567                |D_BLITP14(00)
      |- 001: 2bit pp src, 4bpp dst b76543210=p0123                    |D_BLITP24(01)
      |- 010: 4bit pp src, 4bpp dst b76543210=p01                      |D_BLITP44(02)
@@ -227,7 +234,7 @@ F7  W|Blitter Blit Register                        BIT 7 6 5 4 3 2 1 0|P_BLITCTR
      |- 101: 2bit pp src, 8bpp dst                                    |D_BLITP28(05)
      |- 110: 4bit pp src, 8bpp dst                                    |D_BLITP48(06)
      |- 111: 8bit pp src, 8bpp dst                                    |D_BLITP88(07)
+     |Registers are NOT modified unless specified                     |
 -----+----------------------------------------------------------------+
 XX*  = not implemented yet
-TODO: cpu usage, needs halt inside symbos idle thread
 

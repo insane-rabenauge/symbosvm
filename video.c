@@ -19,13 +19,45 @@ uint32_t video_pal[256];
 uint32_t video_ptr;
 uint16_t video_mptrx;
 uint16_t video_mptry;
+uint8_t video_txtcurx;
+uint8_t video_txtcury;
 uint8_t video_ptrgfx[256];
-uint8_t video_ptrptr=0;
 
 int video_mode=0;
 
 uint8_t video_font8x8[256*8];
 uint8_t video_font8x16[256*16];
+uint8_t video_cursor[16];
+
+static void video_plotchr(int tx,int ty,int leny,int ch,uint8_t* font) {
+  for (int cy=0;cy<leny;cy++) {
+    int vidofs=var_video_vmresx*(ty*leny+cy)+(tx*8);
+    int bmp=font[ch*leny+cy];
+    sys_vidbuf[vidofs++]=(bmp&0x80)?1:0;
+    sys_vidbuf[vidofs++]=(bmp&0x40)?1:0;
+    sys_vidbuf[vidofs++]=(bmp&0x20)?1:0;
+    sys_vidbuf[vidofs++]=(bmp&0x10)?1:0;
+    sys_vidbuf[vidofs++]=(bmp&0x08)?1:0;
+    sys_vidbuf[vidofs++]=(bmp&0x04)?1:0;
+    sys_vidbuf[vidofs++]=(bmp&0x02)?1:0;
+    sys_vidbuf[vidofs++]=(bmp&0x01)?1:0;
+  };
+};
+
+static void video_plotcur(int tx,int ty,int leny) {
+  for (int cy=0;cy<leny;cy++) {
+    int vidofs=var_video_vmresx*(ty*leny+cy)+(tx*8);
+    int bmp=video_cursor[cy];
+    sys_vidbuf[vidofs++]^=(bmp&0x80)?1:0;
+    sys_vidbuf[vidofs++]^=(bmp&0x40)?1:0;
+    sys_vidbuf[vidofs++]^=(bmp&0x20)?1:0;
+    sys_vidbuf[vidofs++]^=(bmp&0x10)?1:0;
+    sys_vidbuf[vidofs++]^=(bmp&0x08)?1:0;
+    sys_vidbuf[vidofs++]^=(bmp&0x04)?1:0;
+    sys_vidbuf[vidofs++]^=(bmp&0x02)?1:0;
+    sys_vidbuf[vidofs++]^=(bmp&0x01)?1:0;
+  };
+};
 
 void video_update() {
   if (video_mode==D_VIDTXT8X8) {
@@ -34,20 +66,11 @@ void video_update() {
     for (int ty=0;ty<chry;ty++) {
       for (int tx=0;tx<chrx;tx++) {
         int ch=z80_mem[video_ptr+(ty*256)+tx];
-
-        for (int cy=0;cy<8;cy++) {
-          int vidofs=var_video_vmresx*(ty*8+cy)+(tx*8);
-          int bmp=video_font8x8[ch*8+cy];
-          sys_vidbuf[vidofs++]=(bmp&0x80)?1:0;
-          sys_vidbuf[vidofs++]=(bmp&0x40)?1:0;
-          sys_vidbuf[vidofs++]=(bmp&0x20)?1:0;
-          sys_vidbuf[vidofs++]=(bmp&0x10)?1:0;
-          sys_vidbuf[vidofs++]=(bmp&0x08)?1:0;
-          sys_vidbuf[vidofs++]=(bmp&0x04)?1:0;
-          sys_vidbuf[vidofs++]=(bmp&0x02)?1:0;
-          sys_vidbuf[vidofs++]=(bmp&0x01)?1:0;
-        };
+        video_plotchr(tx,ty,8,ch,video_font8x8);
       };
+    };
+    if ((video_txtcurx<chrx)&&(video_txtcury<chry)) {
+      video_plotcur(video_txtcurx,video_txtcury,8);
     };
   } else if (video_mode==D_VIDTXT8X16) {
     int chrx=var_video_vmresx/8;
@@ -55,20 +78,11 @@ void video_update() {
     for (int ty=0;ty<chry;ty++) {
       for (int tx=0;tx<chrx;tx++) {
         int ch=z80_mem[video_ptr+(ty*256)+tx];
-
-        for (int cy=0;cy<16;cy++) {
-          int vidofs=var_video_vmresx*(ty*16+cy)+(tx*8);
-          int bmp=video_font8x16[ch*16+cy];
-          sys_vidbuf[vidofs++]=(bmp&0x80)?1:0;
-          sys_vidbuf[vidofs++]=(bmp&0x40)?1:0;
-          sys_vidbuf[vidofs++]=(bmp&0x20)?1:0;
-          sys_vidbuf[vidofs++]=(bmp&0x10)?1:0;
-          sys_vidbuf[vidofs++]=(bmp&0x08)?1:0;
-          sys_vidbuf[vidofs++]=(bmp&0x04)?1:0;
-          sys_vidbuf[vidofs++]=(bmp&0x02)?1:0;
-          sys_vidbuf[vidofs++]=(bmp&0x01)?1:0;
-        };
+        video_plotchr(tx,ty,16,ch,video_font8x16);
       };
+    };
+    if ((video_txtcurx<chrx)&&(video_txtcury<chry)) {
+      video_plotcur(video_txtcurx,video_txtcury,16);
     };
   } else if (video_mode==D_VIDGFX4BPP) {
     int vidrd=video_ptr;
@@ -127,6 +141,8 @@ int init_video() {
   video_pal[1]=0x000000;
   video_mode=0; // TEXT
   video_ptr=0x010000;
+  video_txtcurx=0xff;
+  video_txtcury=0xff;
   return 1;
 };
 

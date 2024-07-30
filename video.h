@@ -11,10 +11,12 @@ extern uint16_t video_mptrx;
 extern uint16_t video_mptry;
 extern uint32_t video_pal[];
 extern uint32_t video_ptr;
-extern uint8_t video_ptrgfx[256];
-extern uint8_t video_ptrptr;
+extern uint8_t video_txtcurx;
+extern uint8_t video_txtcury;
+extern uint8_t video_cursor[];
 extern uint8_t video_font8x8[];
 extern uint8_t video_font8x16[];
+extern uint8_t video_ptrgfx[];
 
 int init_video();
 int done_video();

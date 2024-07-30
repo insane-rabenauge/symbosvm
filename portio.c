@@ -164,6 +164,12 @@ int z80_in(unsigned int port, unsigned int PC) {
     case P_VIDMODE:
       return(video_mode);
       break;
+    case P_TXTCURX:
+      return(video_txtcurx);
+      break;
+    case P_TXTCURY:
+      return(video_txtcury);
+      break;
     case P_PALSEL:
       return(palsel);
       break;
@@ -308,12 +314,6 @@ void z80_out(unsigned int port, unsigned int value, unsigned int PC) {
     case P_MPTRY_HI:
       video_mptry=(video_mptry&0xff)|(value<<8);
       break;
-    case P_MSPRSEL:
-      video_ptrptr=value;
-      break;
-    case P_MSPRDAT:
-      video_ptrgfx[video_ptrptr++]=value;
-      break;
     case P_DSKPTR_L:
       dmaptr=(dmaptr&MEM_MASK&0xffff00)|value;
       break;
@@ -377,17 +377,34 @@ void z80_out(unsigned int port, unsigned int value, unsigned int PC) {
       video_mode=value;
       system_setres(var_video_vmresx,var_video_vmresy);
       break;
+    case P_TXTCURX:
+      video_txtcurx=value;
+      break;
+    case P_TXTCURY:
+      video_txtcury=value;
+      break;
     case P_CHRSEL:
       chrptr=0;
       fntsel=value;
       break;
     case P_CHRDAT:
-      if (fntsel==0) {
-        chrptr&=((256*8)-1);
-        video_font8x8[chrptr++]=value;
-      } else if (fntsel==1) {
-        chrptr&=((256*16)-1);
-        video_font8x16[chrptr++]=value;
+      switch (fntsel) {
+        case D_CHRFNT8X8:
+          chrptr&=((256*8)-1);
+          video_font8x8[chrptr++]=value;
+          break;
+        case D_CHRFNT8X16:
+          chrptr&=((256*16)-1);
+          video_font8x16[chrptr++]=value;
+          break;
+        case D_CHRFNTCUR:
+          chrptr&=(16)-1;
+          video_cursor[chrptr++]=value;
+          break;
+        case D_CHRFNTPTR:
+          chrptr&=(256)-1;
+          video_ptrgfx[chrptr++]=value;
+          break;
       };
       break;
     case P_PALSEL:

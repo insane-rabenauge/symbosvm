@@ -57,7 +57,7 @@ clean:
 
 .PHONY:	backup
 backup:
-	find . -maxdepth 1 -type f ! -name SDL2.dll ! -name $(TARGET) ! -name $(TARGET).exe -print0 | tar cfz `date +old/v%Y%m%d%H%M.tar.gz` --null -T -
+	find . -maxdepth 1 -type f -print0 | tar cfz `date +old/v%Y%m%d%H%M.tar.gz` --null -T -
 #	find . -path ./old -prune -o -type f ! -name SDL2.dll ! -name $(TARGET) ! -name $(TARGET).exe -print0 | tar cfz `date +old/v%Y%m%d%H%M.tar.gz` --null -T -
 
 .PHONY: release.h
