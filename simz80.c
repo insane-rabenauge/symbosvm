@@ -91,8 +91,6 @@ static WORD reg_IFF;
 static WORD implant_IRQ;
 static WORD implant_PC;
 
-static unsigned int READPC;
-
 uint8_t z80_mem[BANK_MAX*BANK_SIZE];
 uint8_t *z80_bank[4];
 uint8_t z80_bankreg[4];
@@ -115,8 +113,8 @@ static INLINE void z80_writew(FASTWORK address, FASTWORK value) {
   z80_bank[(address+1)>>BANK_SHIFT][(address+1)&BANK_MASK]=value>>8;
 };
 
-#define Input(port)     z80_in(port,READPC)
-#define Output(p,v)     z80_out(p,v,READPC)
+#define Input(port)     z80_in(port)
+#define Output(p,v)     z80_out(p,v)
 #define GetBYTE(a)      z80_read(a)
 #define GetBYTE_pp(a)   z80_read(a++)
 #define GetBYTE_mm(a)   z80_read(a--)
@@ -212,7 +210,6 @@ int simz80_run(void) {
   CHECK_IRQ();
 
   while (z80_run) {
-    READPC=PC;          // DEBOUT SUPPORT
     switch(GetBYTE_pp(PC)) {
       case 0x00:      /* NOP */
         break;

@@ -19,8 +19,8 @@ int simz80_getbank(int reg);
 void simz80_getregs(z80_regs *getregs);
 void simz80_setregs(z80_regs *setregs);
 
-extern int z80_in(unsigned int,unsigned int);
-extern void z80_out(unsigned int, unsigned int, unsigned int);
+extern int z80_in(unsigned int);
+extern void z80_out(unsigned int, unsigned int);
 
 extern uint8_t z80_mem[];
 extern uint8_t *z80_bank[];

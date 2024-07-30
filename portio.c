@@ -24,20 +24,7 @@ uint8_t palsel=0,seccnt=0,rtcsel=0;
 int chrptr=0,fntsel=0,dskstat=0,drive=0;
 uint16_t ticks_lines;
 
-void printpc(unsigned int PC) {
-  int pcb=(simz80_getbank((PC>>14)&3))*0x4000;
-  int pco=PC&0x3fff;
-  int pc24=pcb|pco;
-  printf("PC=%06X ",pc24);
-  int addr=pc24-2;
-  printf("[%06X]=",addr);
-  for (int i=0;i<6;i++) {
-    printf("%02X ",z80_mem[addr++]);
-  };
-  printf("\n");
-};
-
-int z80_in(unsigned int port, unsigned int PC) {
+int z80_in(unsigned int port) {
   switch (port&0xff) {
     case P_BANK0:
       return simz80_getbank(0);
@@ -187,12 +174,11 @@ int z80_in(unsigned int port, unsigned int PC) {
       break;
     default:
       printf("%s: %04X, ",__func__,port);
-      printpc(PC);
   };
   return(0xff);
 };
 
-void z80_out(unsigned int port, unsigned int value, unsigned int PC) {
+void z80_out(unsigned int port, unsigned int value) {
   switch (port&0xff) {
     case P_BANK0:
       simz80_setbank(0,value);
@@ -493,7 +479,6 @@ void z80_out(unsigned int port, unsigned int value, unsigned int PC) {
       break;
     default:
       printf("%s: %04X %02X, ",__func__,port,value);
-      printpc(PC);
   };
 };
 
