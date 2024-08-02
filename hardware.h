@@ -15,6 +15,9 @@
 #define P_MEMACC2 0x0E
 #define P_MEMACC2IA 0x0F
 #define P_EXIT 0x10
+#define D_VMEXIT 0x00
+#define D_VMREBOOT 0x01
+#define D_VMSHUTDOWN 0x02
 #define P_CONOUT 0x11
 #define P_BEEP 0x12
 #define P_KEYSCAN 0x14
