@@ -117,6 +117,7 @@ int system_scankey() {
 void system_setres(int x,int y) {
   var_video_vmresx=x;
   var_video_vmresy=y;
+  if ((x>=1024)||(y>=1024)) var_video_scale2x=0;
   if (var_video_scale2x) {
     screenx=2*var_video_vmresx;
     screeny=2*var_video_vmresy;
