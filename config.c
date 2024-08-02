@@ -24,8 +24,8 @@
 #include "config.h"
 
 void config_initvars() {
-  var_video_vmresx=512;
-  var_video_vmresy=256;
+  var_video_vmresx=0;
+  var_video_vmresy=0;
   var_video_fullscreen=1;
   var_video_aspect=0;
   var_video_scale2x=1;
@@ -33,7 +33,6 @@ void config_initvars() {
   var_audio_samplerate=48000;
   var_system_z80memdump=0;
   var_system_memdump=0;
-  var_system_clionly=0;
   var_system_grabkeys=0;
   var_debug_blit=0;
   var_debug_clock=0;
@@ -62,7 +61,6 @@ void config_parseopt(char *opt,char *val) {
   if (strcmp(opt,"debug.rtcwrite")==0)          var_debug_rtcwrite=atoi(val);
   if (strcmp(opt,"system.z80memdump")==0)       var_system_z80memdump=atoi(val);
   if (strcmp(opt,"system.memdump")==0)          var_system_memdump=atoi(val);
-  if (strcmp(opt,"system.clionly")==0)          var_system_clionly=atoi(val);
   if (strcmp(opt,"system.grabkeys")==0)         var_system_grabkeys=atoi(val);
   if (strcmp(opt,"system.bootfile")==0)         snprintf(var_system_bootfile,CONFIGSTRINGSIZE-1,"%s",val);
   if (strcmp(opt,"system.hdd.0")==0)            snprintf(var_system_hdd_0,CONFIGSTRINGSIZE-1,"%s",val);

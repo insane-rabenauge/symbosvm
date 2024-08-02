@@ -34,6 +34,7 @@ SDL_Renderer *sdlrenderer;
 SDL_mutex *sdlsynclock=NULL;
 SDL_cond *sdlsynccond=NULL;
 
+int sys_scale2x=0;
 int screenx=0;
 int screeny=0;
 int8_t sys_mousex=0;
@@ -114,11 +115,14 @@ int system_scankey() {
   return ch;
 };
 
-void system_setres(int x,int y) {
+int system_setres(int x,int y) {
   var_video_vmresx=x;
   var_video_vmresy=y;
-  if ((x>=1024)||(y>=1024)) var_video_scale2x=0;
-  if (var_video_scale2x) {
+
+  sys_scale2x=var_video_scale2x;
+  if ((x>=1024)||(y>=1024)) sys_scale2x=0;
+
+  if (sys_scale2x) {
     screenx=2*var_video_vmresx;
     screeny=2*var_video_vmresy;
   } else {
@@ -126,7 +130,26 @@ void system_setres(int x,int y) {
     screeny=var_video_vmresy;
   };
 
+  screen_rect.x=screen_rect.y=0;
   screen_rect.w=screenx;screen_rect.h=screeny;
+
+  if(!sdlwindow) {
+    sdlwindow=SDL_CreateWindow(WMTITLE,SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,screenx,screeny,0);
+    if (sdlwindow==NULL) {
+      printf("SDL_CreateWindow Error: %s\n", SDL_GetError() );
+      return 0;
+    };
+  };
+
+  if(!sdlrenderer) {
+    sdlrenderer=SDL_CreateRenderer(sdlwindow,-1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
+    if (sdlrenderer==NULL) {
+      printf("SDL_CreateRenderer Error: %s\n", SDL_GetError() );
+      return 0;
+    };
+  };
+
+  SDL_SetRenderDrawBlendMode(sdlrenderer, SDL_BLENDMODE_NONE);
 
   if (sys_vidbuf) free(sys_vidbuf);
   sys_vidbuf=calloc(var_video_vmresx*var_video_vmresy,1);
@@ -136,6 +159,10 @@ void system_setres(int x,int y) {
   if(sdltexture) SDL_DestroyTexture(sdltexture);
 
   sdltexture=SDL_CreateTexture(sdlrenderer,SDL_PIXELFORMAT_ARGB8888,SDL_TEXTUREACCESS_STREAMING,screenx,screeny);
+  if (sdltexture==NULL) {
+    printf("SDL_CreateTexture Error: %s\n", SDL_GetError() );
+    return 0;
+  };
 
   SDL_SetTextureBlendMode(sdltexture, SDL_BLENDMODE_NONE);
 
@@ -145,6 +172,7 @@ void system_setres(int x,int y) {
     SDL_RenderSetLogicalSize(sdlrenderer,0,0);
   };
   SDL_SetWindowPosition(sdlwindow,SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED);
+  return 1;
 };
 
 void system_setfullscreen() {
@@ -188,7 +216,7 @@ void system_blit(uint8_t* screen, uint32_t* pal) {
 
   SDL_LockTexture(sdltexture, NULL, (void**)&sys_pixbuf, &pitch);
   pitchx=pitch/4;
-  if (var_video_scale2x) {
+  if (sys_scale2x) {
     for (int y=0;y<var_video_vmresy;y++) {
       dptr=dofs;
       for (int x=0;x<var_video_vmresx;x++) {
@@ -261,61 +289,31 @@ int system_initsdl() {
     printf("SDL Initialization Error: %s\n", SDL_GetError() );
     return 0;
   };
-  if (var_video_scale2x) {
-    screenx=2*var_video_vmresx;
-    screeny=2*var_video_vmresy;
-  } else {
-    screenx=var_video_vmresx;
-    screeny=var_video_vmresy;
+
+  SDL_DisplayMode dm;
+  if (SDL_GetDesktopDisplayMode(0,&dm)==0) {
+    if (!var_video_vmresx) var_video_vmresx=dm.w;
+    if (!var_video_vmresy) var_video_vmresy=dm.h;
   };
+
+  if (!var_video_vmresx) var_video_vmresx=800; // safe defaults
+  if (!var_video_vmresy) var_video_vmresy=600; // safe defaults
+
   SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
-  SDL_SetHint(SDL_HINT_VIDEO_HIGHDPI_DISABLED, "0");
 
 #if SDL_PATCHLEVEL >= 1
   SDL_SetHint(SDL_HINT_VIDEO_HIGHDPI_DISABLED, "1");
 #endif
-  if (!var_system_clionly) {
-    sdlwindow=SDL_CreateWindow(WMTITLE,SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,screenx,screeny,0);
-    if (sdlwindow==NULL) {
-      printf("SDL_CreateWindow Error: %s\n", SDL_GetError() );
-      return 0;
-    };
 
-    sdlrenderer=SDL_CreateRenderer(sdlwindow,-1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
-    if (sdlrenderer==NULL) {
-      printf("SDL_CreateRenderer Error: %s\n", SDL_GetError() );
-      return 0;
-    };
+  if (!system_setres(var_video_vmresx,var_video_vmresy)) return 0;
 
-    if (var_video_aspect) {
-      SDL_RenderSetLogicalSize(sdlrenderer,screenx,screeny);
-    } else {
-      SDL_RenderSetLogicalSize(sdlrenderer,0,0);
-    };
+  system_setfullscreen();
 
-    SDL_SetRenderDrawBlendMode(sdlrenderer, SDL_BLENDMODE_NONE);
-
-    sdltexture=SDL_CreateTexture(sdlrenderer,SDL_PIXELFORMAT_ARGB8888,SDL_TEXTUREACCESS_STREAMING,screenx,screeny);
-    if (sdltexture==NULL) {
-      printf("SDL_CreateTexture Error: %s\n", SDL_GetError() );
-      return 0;
-    };
-
-    SDL_SetTextureBlendMode(sdltexture, SDL_BLENDMODE_NONE);
-
-    system_setfullscreen();
-    SDL_SetRelativeMouseMode(0);
+  SDL_SetRelativeMouseMode(0);
 
 #if SDL_VERSION_ATLEAST(2,0,16)
-    SDL_SetWindowKeyboardGrab(sdlwindow,var_system_grabkeys);
+  SDL_SetWindowKeyboardGrab(sdlwindow,var_system_grabkeys);
 #endif
-  };
-
-
-  sys_vidbuf=calloc(var_video_vmresx*var_video_vmresy,1);
-
-  screen_rect.x=screen_rect.y=0;
-  screen_rect.w=screenx;screen_rect.h=screeny;
 
   srand(time(NULL));
   sdlsynclock=SDL_CreateMutex();

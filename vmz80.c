@@ -33,11 +33,9 @@ int run_z80() {
     if(!sys_timer_irq)system_waitfortimer();
     sys_timer_irq=0;
     simz80_irq(sys_timer_vector);
-    if (!var_system_clionly) {
-      video_update();
-      audio_update();
-      system_update();
-    };
+    video_update();
+    audio_update();
+    system_update();
   };
   return 1;
 };
