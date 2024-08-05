@@ -9,3 +9,9 @@ planned for the far future:
 - Network
 - performance counter for run_z80
 
+todo:
+reboot vm support
+vm version support
+load symbosvm into own binary file?
+do_load into runz80
+

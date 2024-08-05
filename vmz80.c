@@ -25,14 +25,18 @@ int init_z80() {
   return 1;
 };
 
+void z80_update() {
+  z80_run=1;
+  ticks_framestart=system_gettickus();
+  simz80_run();
+  if(!sys_timer_irq)system_waitfortimer();
+  sys_timer_irq=0;
+  simz80_irq(sys_timer_vector);
+};
+
 int run_z80() {
   while(!sys_quit) {
-    z80_run=1;
-    ticks_framestart=system_gettickus();
-    simz80_run();
-    if(!sys_timer_irq)system_waitfortimer();
-    sys_timer_irq=0;
-    simz80_irq(sys_timer_vector);
+    z80_update();
     video_update();
     audio_update();
     system_update();
