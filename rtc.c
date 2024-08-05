@@ -4,7 +4,7 @@
 #include "release.h"
 
 uint8_t rtc_rtcdata[8];
-uint8_t rtc_rtcstat=1; //b0=RTC avail b1=RTC write
+uint8_t rtc_rtcstat=0; //b0=RTC avail b1=RTC write
 
 void rtc_rtcbuild() {
   rtc_rtcdata[D_RTCYLO]=(SYMBOSVM_BUILD_DY)&0xff;

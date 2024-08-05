@@ -336,7 +336,8 @@ void system_donesdl() {
 void preinit_system() {
   config_initvars();
   config_readini();
-  if (var_debug_rtcwrite) rtc_rtcstat=3;
+  rtc_rtcstat=D_RTCACT;
+  if (var_debug_rtcwrite) rtc_rtcstat|=D_RTCWRT;
 };
 
 int init_system() {
