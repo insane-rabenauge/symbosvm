@@ -20,6 +20,7 @@
 #define D_VMSHUTDOWN 0x02
 #define P_CONOUT 0x11
 #define P_BEEP 0x12
+#define P_VERSION 0x13
 #define P_KEYSCAN 0x14
 #define P_USEDCPU_L 0x15
 #define P_USEDCPU_H 0x16
@@ -117,8 +118,9 @@
 #define P_BLITSIZX_H 0xF3
 #define P_BLITSIZY_L 0xF4
 #define P_BLITSIZY_H 0xF5
-#define P_BLITFILL 0xF6
-#define P_BLITCTRL 0xF7
+#define P_BLITFILL1 0xF6
+#define P_BLITFILL2 0xF7
+#define P_BLITCTRL 0xFF
 #define D_BLITBUSY 0x80
 #define D_BLITBACKX 0x80
 #define D_BLITBACKY 0x40

@@ -23,7 +23,8 @@ uint16_t blitdstx;
 uint16_t blitdsty;
 uint16_t blitsizx;
 uint16_t blitsizy;
-uint8_t blitfill;
+uint8_t blitfill1;
+uint8_t blitfill2;
 int blitposx;
 int blitposy;
 int blitmode;
@@ -83,16 +84,16 @@ void blitpix() {
       blitwritedst(blitreaddst()^blitreadsrc());
       break;
     case D_BMFILL:
-      blitwritedst(blitfill);
+      blitwritedst(blitfill1);
       break;
     case D_BMSKIP:
-      pix=blitreadsrc(); if (pix!=blitfill) blitwritedst(pix);
+      pix=blitreadsrc(); if (pix!=blitfill1) blitwritedst(pix);
       break;
     case D_BMTEXT:
-      pix=blitreadsrc(); if (pix) blitwritedst(blitfill);
+      pix=blitreadsrc(); blitwritedst(pix?blitfill1:blitfill2);
       break;
     case D_BMFXOR:
-      blitwritedst(blitreaddst()^blitfill);
+      blitwritedst(blitreaddst()^blitfill1);
       break;
   };
 };
@@ -111,11 +112,11 @@ void blitline() {
 
 void startblit(uint8_t blitctrl) {
   if(var_debug_blit)
-  printf("BLITDEBUG:%02X:%06X %04X %04X %04X  %06X %04X %04X %04X  %04X %04X  %02X\n", \
+  printf("BLITDEBUG:%02X:%06X %04X %04X %04X  %06X %04X %04X %04X  %04X %04X  %02X %02X\n", \
     blitctrl,\
     blitsrca,blitsrcl,blitsrcx,blitsrcy,\
     blitdsta,blitdstl,blitdstx,blitdsty,\
-    blitsizx,blitsizy,blitfill);
+    blitsizx,blitsizy,blitfill1,blitfill2);
 
   blitmode=blitctrl&0x38;
   pixmode=blitctrl&7;

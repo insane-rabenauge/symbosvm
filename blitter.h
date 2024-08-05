@@ -13,6 +13,7 @@ extern uint16_t blitdstx;
 extern uint16_t blitdsty;
 extern uint16_t blitsizx;
 extern uint16_t blitsizy;
-extern uint8_t blitfill;
+extern uint8_t blitfill1;
+extern uint8_t blitfill2;
 
 #endif

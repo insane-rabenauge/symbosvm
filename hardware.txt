@@ -38,6 +38,8 @@ I/O Ports (Ports in HEX):
      |- 2:Shutdown Host (may not be supported by all OS)              |D_VMSHUTDOWN(02)
 11  W|STDOUT Character Write                                          |P_CONOUT
 12  W|Beeper, 0=off, $04..$FF=Note, $04=A-1 $08=A#1 $34=A-2 $FC=B-6   |P_BEEP
+13 RW|VM Version, write to init read string; read until \0            |P_VERSION
+     |  f.e. "v0.9.20240805\0"                                        |
 -----+----------------------------------------------------------------+
 14  W|Start Keyboard Reading (Set to 0 to start at first scancode)    |P_KEYSCAN
 14 R |Read Keyboard, get first pressed scancode, 0=no further keys    |P_KEYSCAN
@@ -208,24 +210,25 @@ F2  W|Blitter X-Size in Pixels low-byte                               |P_BLITSIZ
 F3  W|Blitter X-Size in Pixels high-byte                              |P_BLITSIZX_H
 F4  W|Blitter Y-Size in Pixels low-byte                               |P_BLITSIZY_L
 F5  W|Blitter Y-Size in Pixels high-byte                              |P_BLITSIZY_H
-F6  W|Blitter Fill/Skip Color                                         |P_BLITFILL
-F7 R |Blitter Blit Status                          BIT 7 6 5 4 3 2 1 0|P_BLITCTRL
+F6  W|Blitter Fill/Skip Color                                         |P_BLITFILL1
+F7  W|Blitter Fill Odd/Paper Color                                    |P_BLITFILL2
+FF R |Blitter Blit Status                          BIT 7 6 5 4 3 2 1 0|P_BLITCTRL
      |                                                 : 0 0 0 0 0 0 0|
      |- 1:Blitter Busy --------------------------------+              |D_BLITBUSY(80)
      |  Always 0 in SYMBOSVM, Z80 is halted during blit               |
-F7  W|Blitter Blit Register                        BIT 7 6 5 4 3 2 1 0|P_BLITCTRL
+FF  W|Blitter Blit Register                        BIT 7 6 5 4 3 2 1 0|P_BLITCTRL
      |  write starts blit                              : : : : : : : :|
      |- 1:backwards blit X, 0:normal blit X -----------+ : : : : : : :|D_BLITBACKX(80)
      |- 1:backwards blit Y, 0:normal blit Y -------------+ : : : : : :|D_BLITBACKY(40)
      |  backwards blit start from source+len-1             : : : : : :|
      |= blit mode -----------------------------------------+-+-+ : : :|
      |- 000:blit (dest)=(src)                                    : : :|D_BMCOPY(00)
-     |- 001:and  (dest)=(dest) and (src)                         : : :|D_BMAND(08)
-     |- 010:or   (dest)=(dest)  or (src)                         : : :|D_BMOR(10)
+     |- 001:and  (dest)=(dest) and (src)                         : : :|D_BMAND(08) - remove?
+     |- 010:or   (dest)=(dest)  or (src)                         : : :|D_BMOR(10)  - remove?
      |- 011:xor  (dest)=(dest) xor (src)                         : : :|D_BMXOR(18)
      |- 100:fill (dest)=fill                                     : : :|D_BMFILL(20)
      |- 101:skip if(src)<>fill (dest)=(src)                      : : :|D_BMSKIP(28)
-     |- 110:text if(src)<>0 (dest)=fill;DSTX+=SIZX               : : :|D_BMTEXT(30)
+     |- 110:text (dest)=(src<>0)?fill1:fill2;DSTX+=SIZX          : : :|D_BMTEXT(30)
      |- 111:fxor (dest)=(dest) xor fill                          : : :|D_BMFXOR(38)
      |                                                           : : :|
      |= pixel mode ----------------------------------------------+-+-+|

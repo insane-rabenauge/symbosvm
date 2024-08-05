@@ -471,8 +471,11 @@ void z80_out(unsigned int port, unsigned int value) {
     case P_BLITSIZY_H:
       blitsizy=(blitsizy&0x00ff)|(value<<8);
       break;
-    case P_BLITFILL:
-      blitfill=value;
+    case P_BLITFILL1:
+      blitfill1=value;
+      break;
+    case P_BLITFILL2:
+      blitfill2=value;
       break;
     case P_BLITCTRL:
       startblit(value);

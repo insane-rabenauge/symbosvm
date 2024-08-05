@@ -7,4 +7,5 @@ obj/
 release.h
 /symbosvm
 /symbosvm.bin
+/symbosvm.zip
 /SDL2.dll

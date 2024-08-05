@@ -47,6 +47,10 @@ DEPFLAGS = -MT $@ -MMD -MP -MF $(OBJDIR)/$*.d
 .PHONY:	all
 all:	$(TARGET)
 
+.PHONY:	zip
+zip:
+	zip -j symbosvm.zip hardware.asm hardware.cpc hardware.txt bin/win64/symbosvm.exe
+
 .PHONY:	run
 run:	$(TARGET)
 	cd $(TARGETDIR) && ./$(APP)
