@@ -17,6 +17,8 @@
 #include "config.h"
 #include "drives.h"
 #include "blitter.h"
+#include "version.h"
+#include "rtc.h"
 
 uint32_t memptr1=0,memptr2=0,dmaptr=0,dsklba=0;
 int memdma=0;
@@ -74,6 +76,9 @@ int z80_in(unsigned int port) {
     case P_MEMACC2IA:
       return(z80_mem[memptr2++]);
       break;
+    case P_VERSION:
+      return((VERSION_MAJOR<<4)+(VERSION_MINOR));
+      break;
     case P_KEYSCAN:
       return(system_scankey());
       break;
@@ -85,11 +90,11 @@ int z80_in(unsigned int port) {
       return((ticks_lines>>8)&0xff);
       break;
     case P_RTCCTRL:
-      return(system_rtcstat);
+      return(rtc_rtcstat);
       break;
     case P_RTCDATA:
       if(rtcsel>7)rtcsel=0;
-      return(system_rtcdata[rtcsel++]);
+      return(rtc_rtcdata[rtcsel++]);
       break;
     case P_MOUSEX:
       return(sys_mousex);
@@ -259,7 +264,8 @@ void z80_out(unsigned int port, unsigned int value) {
         case D_RTCREAD:
           rtcsel=0;
           break;
-        case 1:
+        case D_RTCBUILD:
+          rtc_rtcbuild();
           break;
         case D_RTCLOAD:
           system_rtcload();
@@ -271,7 +277,7 @@ void z80_out(unsigned int port, unsigned int value) {
       break;
     case P_RTCDATA:
       if(rtcsel>7)rtcsel=0;
-      system_rtcdata[rtcsel++]=value;
+      rtc_rtcdata[rtcsel++]=value;
       break;
     case P_MOUSECTRL:
       switch (value&3) {

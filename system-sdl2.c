@@ -15,6 +15,7 @@
 #include "simz80.h"
 #include "config.h"
 #include "hardware.h"
+#include "rtc.h"
 
 #define WMTITLE "SYMBOSVM"
 
@@ -48,9 +49,6 @@ int mousewy=0;
 
 int getkey=0;
 
-uint8_t system_rtcdata[8];
-uint8_t system_rtcstat=1; //b0=RTC avail b1=RTC write
-
 char keystate[SDL_NUM_SCANCODES];
 
 uint8_t* sys_vidbuf;
@@ -65,22 +63,22 @@ void system_rtcload(void) {
   time_t t = time(NULL);
   struct tm tm = *localtime(&t);
   int y=tm.tm_year+1900;
-  system_rtcdata[D_RTCYLO]=y&0xff;system_rtcdata[D_RTCYHI]=y>>8;
-  system_rtcdata[D_RTCMON]=tm.tm_mon+1;
-  system_rtcdata[D_RTCDAY]=tm.tm_mday;
-  system_rtcdata[D_RTCHOU]=tm.tm_hour;
-  system_rtcdata[D_RTCMIN]=tm.tm_min;
-  system_rtcdata[D_RTCSEC]=tm.tm_sec;
+  rtc_rtcdata[D_RTCYLO]=y&0xff;rtc_rtcdata[D_RTCYHI]=y>>8;
+  rtc_rtcdata[D_RTCMON]=tm.tm_mon+1;
+  rtc_rtcdata[D_RTCDAY]=tm.tm_mday;
+  rtc_rtcdata[D_RTCHOU]=tm.tm_hour;
+  rtc_rtcdata[D_RTCMIN]=tm.tm_min;
+  rtc_rtcdata[D_RTCSEC]=tm.tm_sec;
 
   if (var_debug_clock) {
     printf("RTCDEBUG: LOAD: ");
     printf("%02i.%02i.%04i %02i:%02i:%02i\n",
-      system_rtcdata[D_RTCDAY],
-      system_rtcdata[D_RTCMON],
-      system_rtcdata[D_RTCYLO]|(system_rtcdata[D_RTCYHI]<<8),
-      system_rtcdata[D_RTCHOU],
-      system_rtcdata[D_RTCMIN],
-      system_rtcdata[D_RTCSEC]
+      rtc_rtcdata[D_RTCDAY],
+      rtc_rtcdata[D_RTCMON],
+      rtc_rtcdata[D_RTCYLO]|(rtc_rtcdata[D_RTCYHI]<<8),
+      rtc_rtcdata[D_RTCHOU],
+      rtc_rtcdata[D_RTCMIN],
+      rtc_rtcdata[D_RTCSEC]
     );
   };
 };
@@ -89,12 +87,12 @@ void system_rtcsave(void) {
   if (var_debug_clock) {
     printf("RTCDEBUG: SAVE: ");
     printf("%02i.%02i.%04i %02i:%02i:%02i\n",
-      system_rtcdata[D_RTCDAY],
-      system_rtcdata[D_RTCMON],
-      system_rtcdata[D_RTCYLO]|(system_rtcdata[D_RTCYHI]<<8),
-      system_rtcdata[D_RTCHOU],
-      system_rtcdata[D_RTCMIN],
-      system_rtcdata[D_RTCSEC]
+      rtc_rtcdata[D_RTCDAY],
+      rtc_rtcdata[D_RTCMON],
+      rtc_rtcdata[D_RTCYLO]|(rtc_rtcdata[D_RTCYHI]<<8),
+      rtc_rtcdata[D_RTCHOU],
+      rtc_rtcdata[D_RTCMIN],
+      rtc_rtcdata[D_RTCSEC]
     );
   };
 };
@@ -338,7 +336,7 @@ void system_donesdl() {
 void preinit_system() {
   config_initvars();
   config_readini();
-  if (var_debug_rtcwrite) system_rtcstat=3;
+  if (var_debug_rtcwrite) rtc_rtcstat=3;
 };
 
 int init_system() {

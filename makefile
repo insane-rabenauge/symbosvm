@@ -9,6 +9,7 @@ audio.c\
 vmz80.c\
 drives.c\
 config.c\
+rtc.c\
 system-sdl2.c\
 
 ifeq ($(CROSS),w32)
@@ -66,9 +67,15 @@ backup:
 
 .PHONY: release.h
 release.h:
-	@date +"static const unsigned long v_release=%y%m%d%H%M;" > release.h
-	@date +"static const char c_release[]=\"%y%m%d%H%M\";" >> release.h
-	@date +"static const char c_build[]=\"%Y%m%d.%H%M\";" >> release.h
+	@date +"#define SYMBOSVM_BUILD %y%m%d%H%M" > release.h
+	@date +"#define SYMBOSVM_BUILD_D %Y%m%d" >> release.h
+	@date +"#define SYMBOSVM_BUILD_T %H%M" >> release.h
+	@date +"#define SYMBOSVM_BUILD_DY %-Y" >> release.h
+	@date +"#define SYMBOSVM_BUILD_DM %-m" >> release.h
+	@date +"#define SYMBOSVM_BUILD_DD %-d" >> release.h
+	@date +"#define SYMBOSVM_BUILD_TH %-H" >> release.h
+	@date +"#define SYMBOSVM_BUILD_TM %-M" >> release.h
+	@date +"#define SYMBOSVM_BUILD_TS %-S" >> release.h
 
 $(TARGET): $(OBJECTS) release.h
 	@mkdir -p $(@D)

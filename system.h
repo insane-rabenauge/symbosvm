@@ -30,9 +30,6 @@ extern const int sys_timer_vector;
 extern uint32_t* sys_pixbuf;
 extern uint8_t* sys_vidbuf;
 
-extern uint8_t system_rtcdata[8];
-extern uint8_t system_rtcstat;
-
 extern int8_t sys_mousex;
 extern int8_t sys_mousey;
 extern uint8_t sys_mouseb;

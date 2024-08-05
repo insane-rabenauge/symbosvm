@@ -30,6 +30,7 @@
 #define D_RTCWRT 0x02
 #define D_RTCACT 0x01
 #define D_RTCREAD 0x00
+#define D_RTCBUILD 0x01
 #define D_RTCLOAD 0x02
 #define D_RTCSAVE 0x03
 #define P_RTCDATA 0x1D
