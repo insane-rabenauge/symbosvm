@@ -41,7 +41,7 @@ int doload(uint8_t* buf, char * fnam) {
 };
 
 int main(int argc, char *argv[]) {
-  printf("SYMBOSVM v%i.%i b%i.%i\n",VERSION_MAJOR,VERSION_MINOR,SYMBOSVM_BUILD_D,SYMBOSVM_BUILD_T);
+  printf("SYMBOSVM v%i.%i b%s.%s\n",VERSION_MAJOR,VERSION_MINOR,SYMBOSVM_BUILD_D,SYMBOSVM_BUILD_T);
   preinit_system();
 
   if(argc!=2) {

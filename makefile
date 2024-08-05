@@ -67,17 +67,19 @@ backup:
 
 .PHONY: release.h
 release.h:
-	@date +"#define SYMBOSVM_BUILD %y%m%d%H%M" > release.h
-	@date +"#define SYMBOSVM_BUILD_D %Y%m%d" >> release.h
-	@date +"#define SYMBOSVM_BUILD_T %H%M" >> release.h
-	@date +"#define SYMBOSVM_BUILD_DY %-Y" >> release.h
-	@date +"#define SYMBOSVM_BUILD_DM %-m" >> release.h
-	@date +"#define SYMBOSVM_BUILD_DD %-d" >> release.h
-	@date +"#define SYMBOSVM_BUILD_TH %-H" >> release.h
-	@date +"#define SYMBOSVM_BUILD_TM %-M" >> release.h
-	@date +"#define SYMBOSVM_BUILD_TS %-S" >> release.h
+	@date +\
+	"#define SYMBOSVM_BUILD %y%m%d%H%M%n"\
+	"#define SYMBOSVM_BUILD_D \"%Y%m%d\"%n"\
+	"#define SYMBOSVM_BUILD_T \"%H%M\"%n"\
+	"#define SYMBOSVM_BUILD_DY %-Y%n"\
+	"#define SYMBOSVM_BUILD_DM %-m%n"\
+	"#define SYMBOSVM_BUILD_DD %-d%n"\
+	"#define SYMBOSVM_BUILD_TH %-H%n"\
+	"#define SYMBOSVM_BUILD_TM %-M%n"\
+	"#define SYMBOSVM_BUILD_TS %-S%n"\
+	> release.h
 
-$(TARGET): $(OBJECTS) release.h
+$(TARGET): $(OBJECTS)
 	@mkdir -p $(@D)
 	@echo " LD $@"
 	@$(CC) $(OBJECTS) -s -o $@ $(LDFLAGS) $(LDLIBS) $(XLDFLAGS) $(SDLLIBS)
