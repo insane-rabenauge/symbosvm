@@ -223,13 +223,13 @@ FF  W|Blitter Blit Register                        BIT 7 6 5 4 3 2 1 0|P_BLITCTR
      |  backwards blit start from source+len-1             : : : : : :|
      |= blit mode -----------------------------------------+-+-+ : : :|
      |- 000:blit (dest)=(src)                                    : : :|D_BMCOPY(00)
-     |- 001:and  (dest)=(dest) and (src)                         : : :|D_BMAND(08) - remove?
-     |- 010:or   (dest)=(dest)  or (src)                         : : :|D_BMOR(10)  - remove?
+     |- 001:and  (dest)=(dest) and (src)                         : : :|D_BMAND(08)
+     |- 010:or   (dest)=(dest)  or (src)                         : : :|D_BMOR(10)
      |- 011:xor  (dest)=(dest) xor (src)                         : : :|D_BMXOR(18)
      |- 100:fill (dest)=fill                                     : : :|D_BMFILL(20)
      |- 101:skip if(src)<>fill (dest)=(src)                      : : :|D_BMSKIP(28)
      |- 110:text (dest)=(src<>0)?fill1:fill2;DSTX+=SIZX          : : :|D_BMTEXT(30)
-     |- 111:fxor (dest)=(dest) xor fill                          : : :|D_BMFXOR(38)
+     |- 111:fxor (dest)=(dest) xor (pixelcnt&1)?fill2:fill1      : : :|D_BMFXOR(38)
      |                                                           : : :|
      |= pixel mode ----------------------------------------------+-+-+|
      |- 000: 1bit pp src, 4bpp dst b76543210=p01234567                |D_BLITP14(00)

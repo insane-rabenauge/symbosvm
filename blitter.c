@@ -31,6 +31,7 @@ int blitmode;
 int pixmode;
 int blitbackx;
 int blitbacky;
+char pixff;
 
 int blitreadsrc() {
   switch (pixmode&3) {
@@ -93,7 +94,8 @@ void blitpix() {
       pix=blitreadsrc(); blitwritedst(pix?blitfill1:blitfill2);
       break;
     case D_BMFXOR:
-      blitwritedst(blitreaddst()^blitfill1);
+      blitwritedst(blitreaddst()^(pixff?blitfill2:blitfill1));
+      pixff^=1;
       break;
   };
 };
@@ -122,6 +124,7 @@ void startblit(uint8_t blitctrl) {
   pixmode=blitctrl&7;
   blitbackx=blitctrl&D_BLITBACKX;
   blitbacky=blitctrl&D_BLITBACKY;
+  pixff=0;
   if ((blitsizx==0)||(blitsizy==0)) return;
 
   if (blitbacky) {
