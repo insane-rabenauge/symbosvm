@@ -31,8 +31,8 @@ CC=gcc
 SDLPATH=
 XLDFLAGS=
 SDLLIBS=`$(SDLPATH)sdl2-config --libs`
-TARGETDIR=bin/linux
-OBJDIR=obj/linux
+TARGETDIR=bin/linux-`arch`
+OBJDIR=obj/linux-`arch`
 endif
 
 TARGET=$(TARGETDIR)/$(APP)
@@ -50,7 +50,7 @@ all:	$(TARGET)
 
 .PHONY:	zip
 zip:
-	zip -j symbosvm.zip hardware.asm hardware.cpc hardware.txt bin/win64/symbosvm.exe
+	zip -j ../symbosvm.zip hardware.asm hardware.cpc hardware.txt bin/win64/symbosvm.exe
 
 .PHONY:	run
 run:	$(TARGET)
@@ -58,7 +58,8 @@ run:	$(TARGET)
 
 .PHONY: clean
 clean:	
-	@rm -f $(DEPFILES) $(OBJECTS)
+	@rm -r obj/
+#	@rm -f $(DEPFILES) $(OBJECTS)
 
 .PHONY:	backup
 backup:
