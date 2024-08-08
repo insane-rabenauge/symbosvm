@@ -26,6 +26,7 @@ const int sys_timer_freq=50;
 const int sys_timer_vector=0x38;
 
 int sys_quit = 0;
+int sys_quit_type = D_VMEXIT;
 
 SDL_Window *sdlwindow;
 SDL_Texture *sdltexture;
@@ -35,6 +36,8 @@ SDL_Renderer *sdlrenderer;
 SDL_mutex *sdlsynclock=NULL;
 SDL_cond *sdlsynccond=NULL;
 
+int sys_default_vmresx;
+int sys_default_vmresy;
 int sys_scale2x=0;
 int screenx=0;
 int screeny=0;
@@ -245,6 +248,10 @@ void system_update() {
   system_event_handler();
 };
 
+void system_reset() {
+  system_setres(var_video_vmresx,var_video_vmresy);
+};
+
 void system_update_mouse() {
   int sdl_mouseb=SDL_GetRelativeMouseState(&mousex,&mousey);
   sys_mouseb=0;
@@ -277,7 +284,7 @@ void system_timersignal() {
 };
 
 uint32_t system_timercallback(uint32_t interval, void* param ) {
-  z80_run=0;sys_timer_irq=1;
+  z80_running=0;sys_timer_irq=1;
   system_timersignal();
   return interval;
 }
@@ -296,6 +303,9 @@ int system_initsdl() {
 
   if (!var_video_vmresx) var_video_vmresx=800; // safe defaults
   if (!var_video_vmresy) var_video_vmresy=600; // safe defaults
+
+  sys_default_vmresx=var_video_vmresx;
+  sys_default_vmresy=var_video_vmresy;
 
   SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
 

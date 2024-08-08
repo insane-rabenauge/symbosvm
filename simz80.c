@@ -199,7 +199,7 @@ static const unsigned char partab[256] = {
       PC=implant_PC; \
     }
 
-volatile int z80_run;
+volatile int z80_running;
 
 int simz80_run(void) {
   FASTWORK temp, acu, sum, cbits;
@@ -209,7 +209,7 @@ int simz80_run(void) {
 
   CHECK_IRQ();
 
-  while (z80_run) {
+  while (z80_running) {
     switch(GetBYTE_pp(PC)) {
       case 0x00:      /* NOP */
         break;

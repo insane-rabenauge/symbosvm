@@ -21,33 +21,14 @@
 #include "release.h"
 #include "version.h"
 
-int doload(uint8_t* buf, char * fnam) {
-  FILE *f;
-  if ((f=fopen(fnam,"rb"))==NULL) {
-    printf("error loading file %s\n",fnam);
-    return(0);
-  };
-  fseek(f,0,SEEK_END);
-  int fsiz=ftell(f);
-  rewind(f);
-  if (fsiz>=MEM_SIZE) {
-    printf("not enough memory\n");
-    fclose(f);
-    return(0);
-  };
-  fread(buf,fsiz,1,f);
-  fclose(f);
-  return(1);
-};
-
 int main(int argc, char *argv[]) {
   printf("SYMBOSVM v%i.%i b%s.%s\n",VERSION_MAJOR,VERSION_MINOR,SYMBOSVM_BUILD_D,SYMBOSVM_BUILD_T);
   preinit_system();
 
   if(argc!=2) {
-    if(!doload(z80_mem,var_system_bootfile)) return(-1);
+    if(!z80_loadrom(var_system_bootfile)) return(-1);
   } else {
-    if(!doload(z80_mem,argv[1])) return(-1);
+    if(!z80_loadrom(argv[1])) return(-1);
   };
 
   if(!init_system()) {
@@ -60,12 +41,17 @@ int main(int argc, char *argv[]) {
   init_audio();
   init_z80();
 
-  run_z80();
+  z80_execute();
 
+  done_z80();
   done_audio();
   done_video();
   done_system();
   done_drives();
+
+  if (sys_quit_type==D_VMSHUTDOWN) {
+    system(var_system_shutdown);
+  };
 
   return(0);
 };

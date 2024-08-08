@@ -17,6 +17,8 @@ int system_scankey();
 
 void system_waitfortimer();
 
+void system_reset();
+
 void system_rtcload();
 void system_rtcsave();
 
@@ -24,11 +26,15 @@ uint32_t system_gettickus();
 
 extern volatile int sys_timer_irq;
 extern int sys_quit;
+extern int sys_quit_type;
 extern const int sys_timer_freq;
 extern const int sys_timer_vector;
 
 extern uint32_t* sys_pixbuf;
 extern uint8_t* sys_vidbuf;
+
+extern int sys_default_vmresx;
+extern int sys_default_vmresy;
 
 extern int8_t sys_mousex;
 extern int8_t sys_mousey;

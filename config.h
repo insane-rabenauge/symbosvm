@@ -25,6 +25,7 @@ _EXTERN int var_debug_rtcwrite;
 _EXTERN int var_system_z80memdump;
 _EXTERN int var_system_memdump;
 _EXTERN int var_system_grabkeys;
+_EXTERN char var_system_shutdown[CONFIGSTRINGSIZE];
 _EXTERN char var_system_bootfile[CONFIGSTRINGSIZE];
 _EXTERN char var_system_hdd_0[CONFIGSTRINGSIZE];
 _EXTERN char var_system_hdd_1[CONFIGSTRINGSIZE];

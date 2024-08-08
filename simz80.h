@@ -8,7 +8,7 @@ typedef struct {
   uint16_t ir,ix,iy,sp,pc,im,IFF;
 } z80_regs;
 
-extern volatile int z80_run;
+extern volatile int z80_running;
 
 int simz80_run(void); // 0=HALT, 1=normal stop
 int simz80_irq(int addr);

@@ -23,6 +23,9 @@ int16_t beep_synth() {
 void audio_update() {
 };
 
+void audio_reset() {
+};
+
 void audio_beep(uint8_t freq) {
   beepfreq=beeps[freq];
   if (beepfreq==0) beepacc=0;

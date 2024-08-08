@@ -19,6 +19,7 @@ extern uint8_t video_font8x16[];
 extern uint8_t video_ptrgfx[];
 
 int init_video();
+void video_reset();
 int done_video();
 void video_update();
 

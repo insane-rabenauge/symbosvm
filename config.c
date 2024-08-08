@@ -38,6 +38,7 @@ void config_initvars() {
   var_debug_clock=0;
   var_debug_rtcwrite=0;
   strcpy(var_system_bootfile,DEFAULTBIN);
+  strcpy(var_system_shutdown,"");
   strcpy(var_system_hdd_0,"");
   strcpy(var_system_hdd_1,"");
   strcpy(var_system_hdd_2,"");
@@ -62,6 +63,7 @@ void config_parseopt(char *opt,char *val) {
   if (strcmp(opt,"system.z80memdump")==0)       var_system_z80memdump=atoi(val);
   if (strcmp(opt,"system.memdump")==0)          var_system_memdump=atoi(val);
   if (strcmp(opt,"system.grabkeys")==0)         var_system_grabkeys=atoi(val);
+  if (strcmp(opt,"system.shutdown")==0)         snprintf(var_system_shutdown,CONFIGSTRINGSIZE-1,"%s",val);
   if (strcmp(opt,"system.bootfile")==0)         snprintf(var_system_bootfile,CONFIGSTRINGSIZE-1,"%s",val);
   if (strcmp(opt,"system.hdd.0")==0)            snprintf(var_system_hdd_0,CONFIGSTRINGSIZE-1,"%s",val);
   if (strcmp(opt,"system.hdd.1")==0)            snprintf(var_system_hdd_1,CONFIGSTRINGSIZE-1,"%s",val);

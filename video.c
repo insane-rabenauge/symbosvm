@@ -135,14 +135,18 @@ void video_update() {
   system_blit(sys_vidbuf,video_pal);
 };
 
-int init_video() {
+void video_reset() {
   for (int i=0;i<256;i++) video_pal[i]=0;
-  video_pal[0]=0xaaaaaa;
-  video_pal[1]=0x000000;
   video_mode=0; // TEXT
   video_ptr=0x010000;
   video_txtcurx=0xff;
   video_txtcury=0xff;
+  var_video_vmresx=sys_default_vmresx;
+  var_video_vmresy=sys_default_vmresy;
+};
+
+int init_video() {
+  video_reset();
   return 1;
 };
 
