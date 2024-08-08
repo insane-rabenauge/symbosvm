@@ -18,6 +18,7 @@ int system_scankey();
 void system_waitfortimer();
 
 void system_reset();
+void system_shutdown_machine();
 
 void system_rtcload();
 void system_rtcsave();

@@ -374,3 +374,8 @@ int done_system() {
   };
   return 1;
 };
+
+void system_shutdown_machine() {
+  system(var_system_shutdown);
+};
+

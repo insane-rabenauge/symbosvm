@@ -67,13 +67,25 @@ void z80_update() {
   if(!sys_timer_irq)system_waitfortimer();
   sys_timer_irq=0;
   simz80_irq(sys_timer_vector);
-  if (sys_quit_type==D_VMREBOOT) {
-    sys_quit_type=D_VMEXIT;
-    init_z80();
+  if (sys_quit) {
+    char magic[]="HALTVM";
+    z80_regs r;
+    simz80_getregs(&r);
+    if ((r.bc&0xffff)==(magic[0]<<8|magic[1])&&
+        (r.de&0xffff)==(magic[2]<<8|magic[3])&&
+        (r.hl&0xffff)==(magic[4]<<8|magic[5]))
+    {
+      if (sys_quit_type==D_VMREBOOT) {
+        sys_quit=sys_quit_type=0;
+        init_z80();
 
-    video_reset();
-    audio_reset();
-    system_reset();
+        video_reset();
+        audio_reset();
+        system_reset();
+      };
+    } else {
+      sys_quit=sys_quit_type=0;
+    };
   };
 };
 

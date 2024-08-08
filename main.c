@@ -50,7 +50,7 @@ int main(int argc, char *argv[]) {
   done_drives();
 
   if (sys_quit_type==D_VMSHUTDOWN) {
-    system(var_system_shutdown);
+    system_shutdown_machine();
   };
 
   return(0);

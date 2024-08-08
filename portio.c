@@ -235,19 +235,8 @@ void z80_out(unsigned int port, unsigned int value) {
       break;
     case P_EXIT:
       z80_running=0;
-      switch (value) {
-        case D_VMEXIT:
-          sys_quit=1;
-          sys_quit_type=D_VMEXIT;
-          break;
-        case D_VMREBOOT:
-          sys_quit_type=D_VMREBOOT;
-          break;
-        case D_VMSHUTDOWN:
-          sys_quit=1;
-          sys_quit_type=D_VMSHUTDOWN;
-          break;
-      };
+      sys_quit=1;
+      sys_quit_type=value;
       break;
     case P_CONOUT:
       putchar(value);

@@ -36,6 +36,7 @@ I/O Ports (Ports in HEX):
      |- 0:Exit to Host                                                |D_VMEXIT(00)
      |- 1:Reboot VM                                                   |D_VMREBOOT(01)
      |- 2:Shutdown Host (may not be supported by OS)                  |D_VMSHUTDOWN(02)
+     |VM Exit needs BC=DE=HL=='HALTVM'                                |
 11  W|STDOUT Character Write                                          |P_CONOUT
 12  W|Beeper, 0=off, $04..$FF=Note, $04=A-1 $08=A#1 $34=A-2 $FC=B-6   |P_BEEP
 13 R |VM Version, $09=v0.9                                            |P_VERSION
