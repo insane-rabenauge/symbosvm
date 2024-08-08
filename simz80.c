@@ -3210,3 +3210,5 @@ void simz80_setbank(int reg, int dat) {
 int simz80_getbank(int reg) {
   return z80_bankreg[reg&3];
 };
+
+/* vim: set et ts=2 sw=2 :*/

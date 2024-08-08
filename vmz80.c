@@ -98,3 +98,5 @@ int z80_execute() {
   };
   return sys_quit;
 };
+
+/* vim: set et ts=2 sw=2 :*/

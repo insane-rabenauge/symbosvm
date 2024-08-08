@@ -153,3 +153,5 @@ int init_video() {
 int done_video() {
   return 1;
 };
+
+/* vim: set et ts=2 sw=2 :*/

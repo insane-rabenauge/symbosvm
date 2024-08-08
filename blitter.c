@@ -138,3 +138,5 @@ void startblit(uint8_t blitctrl) {
   };
   if (blitmode==D_BMTEXT) blitdstx+=blitsizx;
 };
+
+/* vim: set et ts=2 sw=2 :*/

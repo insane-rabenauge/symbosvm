@@ -120,3 +120,4 @@ int config_readini() {
   return 0;
 };
 
+/* vim: set et ts=2 sw=2 :*/

@@ -379,3 +379,4 @@ void system_shutdown_machine() {
   system(var_system_shutdown);
 };
 
+/* vim: set et ts=2 sw=2 :*/

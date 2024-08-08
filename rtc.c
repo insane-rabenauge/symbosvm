@@ -15,3 +15,5 @@ void rtc_rtcbuild() {
   rtc_rtcdata[D_RTCMIN]=SYMBOSVM_BUILD_TM;
   rtc_rtcdata[D_RTCSEC]=SYMBOSVM_BUILD_TS;
 };
+
+/* vim: set et ts=2 sw=2 :*/

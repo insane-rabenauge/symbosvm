@@ -79,3 +79,5 @@ void init_drives() {
 void done_drives() {
   for (int i=0;i<MAX_DRIVES;i++) drive_close(i);
 };
+
+/* vim: set et ts=2 sw=2 :*/

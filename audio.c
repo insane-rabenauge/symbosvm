@@ -5,7 +5,7 @@
  */
 
 // written by insane/Rabenauge^.tSCc.
-   
+
 #include <math.h>
 #include <stdint.h>
 #include "system.h"
@@ -49,3 +49,5 @@ int init_audio() {
 int done_audio() {
   return 1;
 };
+
+/* vim: set et ts=2 sw=2 :*/

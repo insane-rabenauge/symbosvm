@@ -492,3 +492,4 @@ void z80_out(unsigned int port, unsigned int value) {
   };
 };
 
+/* vim: set et ts=2 sw=2 :*/
