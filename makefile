@@ -27,13 +27,13 @@ SDLLIBS=`$(SDLPATH)sdl2-config --libs`
 TARGETDIR=bin/win64
 OBJDIR=obj/win64
 else
-ARCH=$(shell arch)
+ARCH=$(shell uname)-$(shell arch)
 CC=gcc
 SDLPATH=
 XLDFLAGS=
 SDLLIBS=`$(SDLPATH)sdl2-config --libs`
-TARGETDIR=bin/linux-$(ARCH)
-OBJDIR=obj/linux-$(ARCH)
+TARGETDIR=bin/$(ARCH)
+OBJDIR=obj/$(ARCH)
 endif
 
 TARGET=$(TARGETDIR)/$(APP)
