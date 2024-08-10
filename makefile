@@ -43,7 +43,7 @@ CFLAGS=-Wall -Wno-switch -Ofast
 LDFLAGS=-lm
 SDLFLAGS=`$(SDLPATH)sdl2-config --cflags`
 CFILES=$(filter %.c,$(SOURCES))
-OBJECTS=release.h $(addprefix $(OBJDIR)/,$(addsuffix .o,$(basename $(SOURCES))))
+OBJECTS=$(addprefix $(OBJDIR)/,$(addsuffix .o,$(basename $(SOURCES))))
 DEPFILES=$(addprefix $(OBJDIR)/,$(addsuffix .d,$(basename $(CFILES))))
 DEPFLAGS = -MT $@ -MMD -MP -MF $(OBJDIR)/$*.d
 
@@ -82,7 +82,7 @@ release.h:
 	"#define SYMBOSVM_BUILD_TS %-S%n"\
 	> release.h
 
-$(TARGET): $(OBJECTS)
+$(TARGET): release.h $(OBJECTS)
 	@mkdir -p $(@D)
 	@echo " LD $@"
 	@$(CC) $(OBJECTS) -s -o $@ $(LDFLAGS) $(LDLIBS) $(XLDFLAGS) $(SDLLIBS)
