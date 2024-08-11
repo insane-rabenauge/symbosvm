@@ -2,20 +2,16 @@ v0.9: initial release @ fujijama 2024 party
 - fixed LD A,R clearing I register bug in yaze simz80
 - no sound support other than beeper available
 
-v1.0: TODO: planned release incl. symbosvm.bin kernel
+v1.0:
 - blitter text plot + xor fill enhanced
 - added version interface
+- added vm reboot
+- added host shutdown
 
 planned for the far future:
 - OPL3, OPL4, AY, MP3 sound
 - GFX9000 "lite" emulation
 - Network
-- performance counter for run_z80 loop (for genos)
+- performance counter for run_z80 loop (as alternative to timer)
 - host fs support
-
-todo:
-- reboot vm support
-- load symbosvm into own binary file?
-- do_load into runz80
-- audio queue
 
