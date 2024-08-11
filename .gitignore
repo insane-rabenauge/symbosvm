@@ -4,7 +4,7 @@ obj/
 *.o
 *.d
 *.exe
-release.h
+release.c
 /symbosvm
 /symbosvm.bin
 /symbosvm.zip

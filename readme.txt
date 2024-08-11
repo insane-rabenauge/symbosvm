@@ -1,4 +1,4 @@
-symbosvm v0.9
+symbosvm v1.0
 a fast Z80 virtual machine for the SYmbiosis Multitasking Based Operating System
 
 written by insane of Rabenauge^.tSCc.
