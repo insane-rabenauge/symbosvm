@@ -44,8 +44,8 @@ I/O Ports (Ports in HEX):
 14  W|Start Keyboard Reading (Set to 0 to start at first scancode)    |P_KEYSCAN
 14 R |Read Keyboard, get first pressed scancode, 0=no further keys    |P_KEYSCAN
 -----+----------------------------------------------------------------+
-15  R|CPU usage in uS since start of frame, low-byte, latched on read |P_USEDCPU_L
-16  R|CPU usage in uS since start of frame, high-byte                 |P_USEDCPU_H
+15  R|CPU usage since start of frame, low-byte, latched on read       |P_USEDCPU_L
+16  R|CPU usage since start of frame, high-byte                       |P_USEDCPU_H
      |CPU usage: current time inside frame in us / 64                 |
 -----+----------------------------------------------------------------+
 18  W|DMA Copy Length, Lobyte                                         |P_MEMDMA_L
