@@ -34,7 +34,7 @@ void config_initvars() {
   var_audio_samplerate=48000;
   var_system_z80memdump=0;
   var_system_memdump=0;
-  var_system_grabkeys=0;
+  var_system_grabkeys=1;
   var_debug_blit=0;
   var_debug_clock=0;
   var_debug_rtcwrite=0;

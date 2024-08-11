@@ -5,9 +5,7 @@ written by insane of Rabenauge^.tSCc.
 
 usage: symbosvm [z80program.bin]
 
-standard loaded program: symbosvm.bin
-
-configure using symbosvm.ini
+look at the optional symbosvm.ini for further configuration
 
 global keys:
   LCTRL+LALT+C: force quit
