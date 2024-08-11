@@ -1,6 +1,6 @@
 SymbOS-VM Register Listing - by insane/rabenauge^tSCc
 
-WIP 20230727
+WIP 20230808
 
 Memory Address Space:
   $000000-$3FFFFF
