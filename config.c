@@ -19,6 +19,7 @@
 
 #define CONFIGINI "symbosvm.ini"
 #define DEFAULTBIN "symbosvm.bin"
+#define DEFAULTIMG "symbosvm.img"
 
 #define _CONFIG_H_IMPLEMENTATION
 #include "config.h"
@@ -39,7 +40,7 @@ void config_initvars() {
   var_debug_rtcwrite=0;
   strcpy(var_system_bootfile,DEFAULTBIN);
   strcpy(var_system_shutdown,"");
-  strcpy(var_system_hdd_0,"");
+  strcpy(var_system_hdd_0,DEFAULTIMG);
   strcpy(var_system_hdd_1,"");
   strcpy(var_system_hdd_2,"");
   strcpy(var_system_hdd_3,"");
