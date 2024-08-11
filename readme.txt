@@ -11,15 +11,3 @@ global keys:
   LCTRL+LALT+C: force quit
   LCTRL+LALT+ENTER: fullscreen
 
-compiling:
-- symbosvm needs SDL2
-
-linux:
-  make -j
-
-linux to windows 32bit:
-  make CROSS=w32 -j
-
-linux to windows 64bit:
-  make CROSS=w64 -j
-

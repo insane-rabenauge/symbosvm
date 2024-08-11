@@ -1,0 +1,12 @@
+compiling:
+- symbosvm needs SDL2
+
+linux:
+  make -j
+
+linux to windows 32bit:
+  make CROSS=w32 -j
+
+linux to windows 64bit:
+  make CROSS=w64 -j
+
