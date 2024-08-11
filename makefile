@@ -1,5 +1,6 @@
 APP=symbosvm
 SOURCES=\
+release.c\
 main.c\
 simz80.c\
 portio.c\
@@ -68,21 +69,21 @@ backup:
 	find . -maxdepth 1 -type f -print0 | tar cfz `date +old/v%Y%m%d%H%M.tar.gz` --null -T -
 #	find . -path ./old -prune -o -type f ! -name SDL2.dll ! -name $(TARGET) ! -name $(TARGET).exe -print0 | tar cfz `date +old/v%Y%m%d%H%M.tar.gz` --null -T -
 
-.PHONY: release.h
-release.h:
+.PHONY: release.c
+release.c:
 	@date +\
-	"#define SYMBOSVM_BUILD %y%m%d%H%M%n"\
-	"#define SYMBOSVM_BUILD_D \"%Y%m%d\"%n"\
-	"#define SYMBOSVM_BUILD_T \"%H%M\"%n"\
-	"#define SYMBOSVM_BUILD_DY %-Y%n"\
-	"#define SYMBOSVM_BUILD_DM %-m%n"\
-	"#define SYMBOSVM_BUILD_DD %-d%n"\
-	"#define SYMBOSVM_BUILD_TH %-H%n"\
-	"#define SYMBOSVM_BUILD_TM %-M%n"\
-	"#define SYMBOSVM_BUILD_TS %-S%n"\
-	> release.h
+	"int SYMBOSVM_BUILD=%y%m%d%H%M;%n"\
+	"char SYMBOSVM_BUILD_D[]=\"%Y%m%d\";%n"\
+	"char SYMBOSVM_BUILD_T[]=\"%H%M\";%n"\
+	"int SYMBOSVM_BUILD_DY=%-Y;%n"\
+	"int SYMBOSVM_BUILD_DM=%-m;%n"\
+	"int SYMBOSVM_BUILD_DD=%-d;%n"\
+	"int SYMBOSVM_BUILD_TH=%-H;%n"\
+	"int SYMBOSVM_BUILD_TM=%-M;%n"\
+	"int SYMBOSVM_BUILD_TS=%-S;%n"\
+	> release.c
 
-$(TARGET): release.h $(OBJECTS)
+$(TARGET): $(OBJECTS)
 	@mkdir -p $(@D)
 	@echo " LD $@"
 	@$(CC) $(OBJECTS) -s -o $@ $(LDFLAGS) $(LDLIBS) $(XLDFLAGS) $(SDLLIBS)
