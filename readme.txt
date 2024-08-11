@@ -12,6 +12,7 @@ global keys:
   LCTRL+LALT+ENTER: fullscreen
 
 compiling:
+- symbosvm needs SDL2
 
 linux:
   make -j
