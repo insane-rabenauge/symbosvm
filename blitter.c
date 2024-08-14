@@ -33,7 +33,7 @@ int blitbackx;
 int blitbacky;
 char pixff;
 
-int blitreadsrc() {
+INLINE int blitreadsrc() {
   switch (pixmode&3) {
     case 0: //1bpp
       return (z80_mem[blitsrca+((blitposy+blitsrcy)*blitsrcl)+((blitposx+blitsrcx)>>3)]>>((((blitposx+blitsrcx)&7)^7)))&0x1;
@@ -47,7 +47,7 @@ int blitreadsrc() {
   return 0;
 };
 
-int blitreaddst() {
+INLINE int blitreaddst() {
   if (pixmode&4) { //8bpp
     return z80_mem[blitdsta+((blitposy+blitdsty)*blitdstl)+blitposx+blitdstx];
   } else {
@@ -56,7 +56,7 @@ int blitreaddst() {
   return 0;
 };
 
-void blitwritedst(int pix) {
+INLINE void blitwritedst(int pix) {
   if (pixmode&4) { //8bpp
     z80_mem[blitdsta+((blitposy+blitdsty)*blitdstl)+blitposx+blitdstx]=pix;
   } else {
@@ -69,7 +69,7 @@ void blitwritedst(int pix) {
   };
 };
 
-void blitpix() {
+INLINE void blitpix() {
   int pix;
   switch(blitmode) {
     case D_BMCOPY:
