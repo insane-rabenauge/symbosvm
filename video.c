@@ -60,6 +60,7 @@ static void video_plotcur(int tx,int ty,int leny) {
 };
 
 void video_update() {
+  if (!sys_vidbuf) return;
   if (video_mode==D_VIDTXT8X8) {
     int chrx=var_video_vmresx/8;
     int chry=var_video_vmresy/8;
