@@ -23,6 +23,7 @@ uint8_t video_txtcurx;
 uint8_t video_txtcury;
 
 int video_mode=0;
+int video_earlyblit=0;
 
 uint8_t video_ptrgfx[256];
 uint8_t video_font8x8[256*8];
@@ -61,6 +62,7 @@ static void video_plotcur(int tx,int ty,int leny) {
 
 void video_update() {
   if (!sys_vidbuf) return;
+  if (video_earlyblit) system_blit(sys_vidbuf,video_pal); // blit last frame
   if (video_mode==D_VIDTXT8X8) {
     int chrx=var_video_vmresx/8;
     int chry=var_video_vmresy/8;
@@ -133,7 +135,7 @@ void video_update() {
       };
     };
   };
-  system_blit(sys_vidbuf,video_pal);
+  if (!video_earlyblit) system_blit(sys_vidbuf,video_pal); // blit current frame
 };
 
 void video_reset() {

@@ -17,6 +17,7 @@ extern uint8_t video_cursor[];
 extern uint8_t video_font8x8[];
 extern uint8_t video_font8x16[];
 extern uint8_t video_ptrgfx[];
+extern int video_earlyblit;
 
 int init_video();
 void video_reset();
