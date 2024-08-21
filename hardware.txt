@@ -122,10 +122,13 @@ I/O Ports (Ports in HEX):
      |     Status=1 if OK, 0 if Write Error                      : : :|
      |- Drive Select (0-7) --------------------------------------+-+-+|
 48 R |Disk Command Status                          BIT 7 6 5 4 3 2 1 0|P_DSKCMD
-     |                                                 : 0 0 0 0 0 0 :|
-     |- 1: DMA Busy -----------------------------------+             :|D_DSKBUSY(80)
-     |  Always 0 in SYMBOSVM, Z80 is halted during disk dma          :|
+     |                                                 : 0 0 0 0 0 : :|
+     |- 1: DMA Busy -----------------------------------+           : :|D_DSKBUSY(80)
+     |  Always 0 in SYMBOSVM, Z80 is halted during disk dma        : :|
+     |- 1: use HOSTFS interface instead of direct drive dma -------+ :|D_DSKHOSTFS(02)
      |- 1: Last Command OK, 0: I/O Error ----------------------------+|D_DSKOK(01)
+49 RW|HostFS Interface                                                |P_HOSTFS
+     |(To be defined)                                                 |
 -----+----------------------------------------------------------------+
 50 RW|Video Pointer low-byte                                          |P_VIDPTR_L
 51 RW|Video Pointer high-byte                                         |P_VIDPTR_H
