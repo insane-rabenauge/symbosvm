@@ -15,11 +15,6 @@
 #include "config.h"
 #include "audio_ym.h"
 
-#define YMFREQ_CPC 1000000
-#define YMFREQ_ZX  1773400
-#define YMFREQ_MSX 1789772
-#define YMFREQ_ST  2000000
-
 int ymfreqs[16]={0,1000000,1773400,1789772,2000000};
 
 ayemu_ay_t psg1;
