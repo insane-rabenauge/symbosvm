@@ -103,8 +103,8 @@
 #define P_PSG1DAT 0xA1
 #define P_PSG1CTRL 0xA2
 #define D_PSGMONO 0x00
-#define D_PSGSABC 0x01
-#define D_PSGSACB 0x02
+#define D_PSGSABC 0x10
+#define D_PSGSACB 0x20
 #define D_PSGOFF 0x00
 #define D_PSGCCPC 0x01
 #define D_PSGCZX 0x02

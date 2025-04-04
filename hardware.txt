@@ -187,8 +187,8 @@ A2  W|YM2149 #1 Control                            BIT 7 6 5 4 3 2 1 0|P_PSG1CTR
      |                                                 0 0 : : 0 : : :|
      |= Stereo Mode ---------------------------------------+-+   : : :|
      |- 0:Mono                                                   : : :|D_PSGMONO(00)
-     |- 1:ABC Stereo / CPC                                       : : :|D_PSGSABC(01)
-     |- 2:ACB Stereo / ZX                                        : : :|D_PSGSACB(02)
+     |- 1:ABC Stereo / CPC                                       : : :|D_PSGSABC(10)
+     |- 2:ACB Stereo / ZX                                        : : :|D_PSGSACB(20)
      |= Freq ----------------------------------------------------+-+-+|
      |- 0:Disable YM2149                                              |D_PSGOFF(00)
      |- 1:1000000 Hz Clock                                            |D_PSGCCPC(01)
