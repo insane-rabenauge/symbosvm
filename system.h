@@ -25,6 +25,11 @@ void system_rtcsave();
 
 uint32_t system_gettickus();
 
+uint32_t system_audqueuesize();
+void system_audqueueadd(uint32_t aud);
+void system_audqueueclear();
+void system_audqueueaddbulk(int16_t* aud,int samp);
+
 extern volatile int sys_timer_irq;
 extern int sys_quit;
 extern int sys_quit_type;

@@ -7,6 +7,7 @@ portio.c\
 blitter.c\
 video.c\
 audio.c\
+audio_ym.c\
 vmz80.c\
 drives.c\
 config.c\

@@ -32,6 +32,7 @@ void config_initvars() {
   var_video_scale2x=1;
   var_audio_enabled=1;
   var_audio_samplerate=48000;
+  var_audio_buffersize=1024;
   var_system_z80memdump=0;
   var_system_memdump=0;
   var_system_grabkeys=1;
@@ -58,6 +59,7 @@ void config_parseopt(char *opt,char *val) {
   if (strcmp(opt,"video.scale2x")==0)           var_video_scale2x=atoi(val);
   if (strcmp(opt,"audio.enabled")==0)           var_audio_enabled=atoi(val);
   if (strcmp(opt,"audio.samplerate")==0)        var_audio_samplerate=atoi(val);
+  if (strcmp(opt,"audio.buffersize")==0)        var_audio_buffersize=atoi(val);
   if (strcmp(opt,"debug.blit")==0)              var_debug_blit=atoi(val);
   if (strcmp(opt,"debug.clock")==0)             var_debug_clock=atoi(val);
   if (strcmp(opt,"debug.rtcwrite")==0)          var_debug_rtcwrite=atoi(val);

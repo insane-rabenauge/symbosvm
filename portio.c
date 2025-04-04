@@ -22,7 +22,7 @@
 
 uint32_t memptr1=0,memptr2=0,dmaptr=0,dsklba=0;
 int memdma=0;
-uint8_t palsel=0,seccnt=0,rtcsel=0;
+uint8_t palsel=0,seccnt=0,rtcsel=0,psg1sel=0,psg2sel=0;
 int chrptr=0,fntsel=0,dskstat=0,drive=0;
 uint16_t ticks_lines;
 
@@ -178,7 +178,7 @@ int z80_in(unsigned int port) {
       return 0;
       break;
     default:
-      printf("%s: %04X, ",__func__,port);
+      printf("%s: %04X\n",__func__,port);
   };
   return(0xff);
 };
@@ -412,6 +412,24 @@ void z80_out(unsigned int port, unsigned int value) {
     case P_PALB:
       video_pal[palsel]=(video_pal[palsel]&0xffff00)|(value<<0 );
       break;
+    case P_PSG1SEL:
+      psg1sel=value;
+      break;
+    case P_PSG1DAT:
+      audio_psg1set(psg1sel,value);
+      break;
+    case P_PSG1CTRL:
+      audio_psg1ctrl(value);
+      break;
+    case P_PSG2SEL:
+      psg2sel=value;
+      break;
+    case P_PSG2DAT:
+      audio_psg2set(psg2sel,value);
+      break;
+    case P_PSG2CTRL:
+      audio_psg2ctrl(value);
+      break;
     case P_BLITSRCA_L:
       blitsrca=(blitsrca&MEM_MASK&0xffff00)|value;
       break;
@@ -488,7 +506,7 @@ void z80_out(unsigned int port, unsigned int value) {
       startblit(value);
       break;
     default:
-      printf("%s: %04X %02X, ",__func__,port,value);
+      printf("%s: %04X %02X\n",__func__,port,value);
   };
 };
 

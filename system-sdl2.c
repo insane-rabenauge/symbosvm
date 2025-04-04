@@ -49,6 +49,7 @@ int mousex=0;
 int mousey=0;
 int mousewx=0;
 int mousewy=0;
+int mouserel=0;
 
 int getkey=0;
 
@@ -56,6 +57,8 @@ char keystate[SDL_NUM_SCANCODES];
 
 uint8_t* sys_vidbuf;
 SDL_Rect screen_rect;
+
+SDL_AudioDeviceID auddev=1;
 
 uint32_t system_gettickus() {
   uint64_t sdl_us=SDL_GetPerformanceCounter()/(SDL_GetPerformanceFrequency()/1000000);
@@ -200,6 +203,10 @@ void system_event_handler() {
       case SDL_KEYDOWN:
         keystate[sdlevent.key.keysym.scancode]=1;
         if (keystate[SDL_SCANCODE_LCTRL]&&keystate[SDL_SCANCODE_LALT]&&keystate[SDL_SCANCODE_C]) sys_quit=1;
+        if (keystate[SDL_SCANCODE_LCTRL]&&keystate[SDL_SCANCODE_LALT]&&keystate[SDL_SCANCODE_SPACE]) {
+          mouserel^=1;
+          SDL_SetRelativeMouseMode(mouserel);
+        };
         if (keystate[SDL_SCANCODE_LCTRL]&&keystate[SDL_SCANCODE_LALT]&&keystate[SDL_SCANCODE_RETURN]) {
           var_video_fullscreen^=1;
           system_setfullscreen();
@@ -269,6 +276,7 @@ void system_update_mouse() {
 void system_capturemouse(int capture) {
   sys_mouseon=capture;
   SDL_SetRelativeMouseMode(capture);
+  mouserel=capture;
 };
 
 void system_waitfortimer() {
@@ -289,11 +297,38 @@ uint32_t system_timercallback(uint32_t interval, void* param ) {
   return interval;
 }
 
+uint32_t system_audqueuesize() {
+  return SDL_GetQueuedAudioSize(auddev)/4;
+};
+
+void system_audqueueadd(uint32_t aud) {
+  SDL_QueueAudio(auddev,&aud,4);
+};
+
+void system_audqueueaddbulk(int32_t* aud,int samp) {
+  SDL_QueueAudio(auddev,aud,samp*4);
+};
+
+void system_audqueueclear() {
+  SDL_ClearQueuedAudio(auddev);
+};
+
 int system_initsdl() {
   if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_AUDIO|SDL_INIT_TIMER)<0) {
     printf("SDL Initialization Error: %s\n", SDL_GetError() );
     return 0;
   };
+
+  SDL_AudioSpec audwant;
+  SDL_AudioSpec audget;
+
+  memset(&audwant, 0, sizeof(audwant));
+  audwant.freq = var_audio_samplerate;
+  audwant.format = AUDIO_S16;
+  audwant.channels = 2;
+  audwant.samples = var_audio_buffersize;
+  audwant.callback = NULL;
+  auddev=SDL_OpenAudioDevice(NULL,0,&audwant,&audget,0);
 
   SDL_DisplayMode dm;
   if (SDL_GetDesktopDisplayMode(0,&dm)==0) {
@@ -328,10 +363,12 @@ int system_initsdl() {
   sdlsynccond=SDL_CreateCond();
 
   timerID=SDL_AddTimer(1000/sys_timer_freq,system_timercallback,NULL);
+  SDL_PauseAudioDevice(auddev,0);
   return 1;
 };
 
 void system_donesdl() {
+  SDL_PauseAudioDevice(auddev,1);
   SDL_RemoveTimer(timerID);
   SDL_DestroyMutex(sdlsynclock);sdlsynclock=NULL;
   SDL_DestroyCond(sdlsynccond);sdlsynccond=NULL;

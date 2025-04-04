@@ -19,6 +19,7 @@ _EXTERN int var_video_scaler;
 _EXTERN int var_video_scale2x;
 _EXTERN int var_audio_enabled;
 _EXTERN int var_audio_samplerate;
+_EXTERN int var_audio_buffersize;
 _EXTERN int var_debug_blit;
 _EXTERN int var_debug_clock;
 _EXTERN int var_debug_rtcwrite;
