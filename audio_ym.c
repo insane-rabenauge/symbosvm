@@ -99,10 +99,10 @@ void ayemu_set_regs(ayemu_ay_t * ay, ayemu_ay_reg_frame_t regs) {
   ay->regs.env_b = regs[9] & 0x10;
   ay->regs.env_c = regs[10] & 0x10;
   ay->regs.env_freq = regs[11] + (regs[12] << 8);
-  if (regs[13] != 0xff) {
+  if ((regs[13] & 0x80)==0) {
     ay->regs.env_style = regs[13] & 0x0f;
     ay->env_pos = ay->cnt_e = 0;
-    regs[13]=0xff;
+    regs[13]|=0x80;
   }
 }
 
