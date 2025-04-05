@@ -182,7 +182,7 @@ I/O Ports (Ports in HEX):
 7F* W|OPL4-EMU: DATA   WAVETABLE                                      |
 -----+----------------------------------------------------------------+
 A0* W|YM2149 #1 SEL                                                   |P_PSG1SEL
-A1* W|YM2149 #1 DAT                                                   |P_PSG1DAT
+A1*RW|YM2149 #1 DAT                                                   |P_PSG1DAT
 A2  W|YM2149 #1 Control                            BIT 7 6 5 4 3 2 1 0|P_PSG1CTRL
      |                                                 0 0 : : 0 : : :|
      |= Stereo Mode ---------------------------------------+-+   : : :|
@@ -196,7 +196,7 @@ A2  W|YM2149 #1 Control                            BIT 7 6 5 4 3 2 1 0|P_PSG1CTR
      |- 3:1789772 Hz Clock                                            |D_PSGCMSX(03)
      |- 4:2000000 Hz Clock                                            |D_PSGCST(04)
 A3* W|YM2149 #2 SEL                                                   |P_PSG2SEL
-A4* W|YM2149 #2 DAT                                                   |P_PSG2DAT
+A4*RW|YM2149 #2 DAT                                                   |P_PSG2DAT
 A5  W|YM2149 #2 Control                                               |P_PSG2CTRL
 -----+----------------------------------------------------------------+
 C4* W|OPL3-EMU: SELECT 0                                              |

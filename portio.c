@@ -174,6 +174,12 @@ int z80_in(unsigned int port) {
     case P_PALB:
       return((video_pal[palsel]>>0 )&0xff);
       break;
+    case P_PSG1DAT:
+      return(audio_psg1get(psg1sel));
+      break;
+    case P_PSG2DAT:
+      return(audio_psg2get(psg2sel));
+      break;
     case P_BLITCTRL:
       return 0;
       break;

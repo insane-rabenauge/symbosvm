@@ -23,12 +23,22 @@ ayemu_ay_reg_frame_t psg1regs;
 ayemu_ay_reg_frame_t psg2regs;
 int audqueueold=0;
 
+int audio_psg1get(int sel) {
+  return(psg1regs[sel&15]);
+};
+
+int audio_psg2get(int sel) {
+  return(psg2regs[sel&15]);
+};
+
 void audio_psg1set(int sel,int dat) {
   psg1regs[sel&15]=dat;
+  ayemu_set_reg(&psg1,sel,dat);
 };
 
 void audio_psg2set(int sel,int dat) {
   psg2regs[sel&15]=dat;
+  ayemu_set_reg(&psg2,sel,dat);
 };
 
 void audio_psg1ctrl(int dat) {
@@ -77,9 +87,6 @@ uint32_t aud_mix(uint32_t out, uint32_t out2) {
 
 int audio_update() {
   int audon=0,smpcnt=0,smpadd=0;
-
-// calc samples and push to system
-  ayemu_set_regs(&psg1,psg1regs);
 
 // check if any sound chip is enabled
   if (psg1.ChipFreq) audon=1;
