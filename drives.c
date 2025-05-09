@@ -31,7 +31,7 @@ int drive_close(int drive) {
   if (drive>MAX_DRIVES) return 0;
   if (drives[drive].ready) fclose(drives[drive].fp);
   drives[drive].ready=0;
-  return 0;
+  return 1;
 };
 
 int drive_getinfo(int drive,uint32_t* seccnt) {
@@ -42,7 +42,7 @@ int drive_getinfo(int drive,uint32_t* seccnt) {
   uint64_t filesiz=OS_FTELL(drives[drive].fp);
   rewind(drives[drive].fp);
   *seccnt=(filesiz/SECTOR_SIZE);
-  return 0;
+  return 1;
 };
 
 int drive_read(int drive,int seccnt,uint32_t lbasec,uint32_t dmaptr) {
