@@ -260,9 +260,6 @@ void z80_out(unsigned int port, unsigned int value) {
       printf("DEBUG VALUE #%02X\n",value);
       fflush(stdout);
       break;
-    case P_BEEP:
-      audio_beep(value);
-      break;
     case P_KEYSCAN:
       system_initscan(value);
       break;

@@ -81,35 +81,9 @@ void ayemu_set_reg(ayemu_ay_t * ay, int sel, int dat) {
   };
 }
 
-void ayemu_set_regs(ayemu_ay_t * ay, ayemu_ay_reg_frame_t regs) {
-  ay->regs.tone_a = regs[0] + ((regs[1] & 0x0f) << 8);
-  ay->regs.tone_b = regs[2] + ((regs[3] & 0x0f) << 8);
-  ay->regs.tone_c = regs[4] + ((regs[5] & 0x0f) << 8);
-  ay->regs.noise = regs[6] & 0x1f;
-  ay->regs.R7_tone_a = !(regs[7] & 0x01);
-  ay->regs.R7_tone_b = !(regs[7] & 0x02);
-  ay->regs.R7_tone_c = !(regs[7] & 0x04);
-  ay->regs.R7_noise_a = !(regs[7] & 0x08);
-  ay->regs.R7_noise_b = !(regs[7] & 0x10);
-  ay->regs.R7_noise_c = !(regs[7] & 0x20);
-  ay->regs.vol_a = regs[8] & 0x0f;
-  ay->regs.vol_b = regs[9] & 0x0f;
-  ay->regs.vol_c = regs[10] & 0x0f;
-  ay->regs.env_a = regs[8] & 0x10;
-  ay->regs.env_b = regs[9] & 0x10;
-  ay->regs.env_c = regs[10] & 0x10;
-  ay->regs.env_freq = regs[11] + (regs[12] << 8);
-  if ((regs[13] & 0x80)==0) {
-    ay->regs.env_style = regs[13] & 0x0f;
-    ay->env_pos = ay->cnt_e = 0;
-    regs[13]|=0x80;
-  }
-}
-
 uint32_t ayemu_mix(ayemu_ay_t * ay) {
   int mix_l, mix_r;
   int tmpvol;
-
   while (ay->ChipStep < ay->ChipFreq) {
     if (++ay->cnt_a >= ay->regs.tone_a) {
       ay->cnt_a = 0;
@@ -155,3 +129,4 @@ uint32_t ayemu_mix(ayemu_ay_t * ay) {
   return mix_l | (mix_r << 16);
 }
 
+/* vim: set et ts=2 sw=2 :*/

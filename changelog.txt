@@ -11,6 +11,9 @@ v1.0:
 v1.1: mittwintermeeting 2025 release
 - added ym2149
 
+v1.x:
+- removed beeper
+
 planned for the far future:
 - OPL3, OPL4, MP3 sound
 - GFX9000 "lite" emulation

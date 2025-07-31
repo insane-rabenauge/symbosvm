@@ -52,6 +52,5 @@ typedef struct {
 
 void ayemu_init(ayemu_ay_t * ay, int chipfreq, int freq, char* pan);
 void ayemu_set_reg(ayemu_ay_t * ay, int sel, int dat);
-void ayemu_set_regs(ayemu_ay_t * ay, ayemu_ay_reg_frame_t regs);
 uint32_t ayemu_mix(ayemu_ay_t * ay);
 #endif

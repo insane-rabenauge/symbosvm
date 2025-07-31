@@ -19,7 +19,7 @@
 #define D_VMREBOOT 0x01
 #define D_VMSHUTDOWN 0x02
 #define P_CONOUT 0x11
-#define P_BEEP 0x12
+#define P_SNDCTRL 0x12
 #define P_VERSION 0x13
 #define P_KEYSCAN 0x14
 #define P_USEDCPU_L 0x15
