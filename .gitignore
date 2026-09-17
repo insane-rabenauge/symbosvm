@@ -6,6 +6,5 @@ obj/
 *.exe
 release.c
 /symbosvm
-/symbosvm.bin
 /symbosvm.zip
 /SDL2.dll

@@ -4,6 +4,6 @@
 extern uint8_t rtc_rtcdata[8];
 extern uint8_t rtc_rtcstat;
 
-void rtc_rtcbuild();
+void rtc_rtcbuild(void);
 
 #endif

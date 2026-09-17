@@ -20,6 +20,7 @@
 #define CONFIGINI "symbosvm.ini"
 #define DEFAULTBIN "symbosvm.bin"
 #define DEFAULTIMG "symbosvm.img"
+#define DEFAULTDIR "."
 
 #define _CONFIG_H_IMPLEMENTATION
 #include "config.h"
@@ -39,16 +40,25 @@ void config_initvars() {
   var_debug_blit=0;
   var_debug_clock=0;
   var_debug_rtcwrite=0;
+  var_debug_hostfs=1;
   strcpy(var_system_bootfile,DEFAULTBIN);
   strcpy(var_system_shutdown,"");
-  strcpy(var_system_hdd_0,DEFAULTIMG);
-  strcpy(var_system_hdd_1,"");
-  strcpy(var_system_hdd_2,"");
-  strcpy(var_system_hdd_3,"");
-  strcpy(var_system_hdd_4,"");
-  strcpy(var_system_hdd_5,"");
-  strcpy(var_system_hdd_6,"");
-  strcpy(var_system_hdd_7,"");
+  strcpy(var_mount_image_0,"");
+  strcpy(var_mount_image_1,"");
+  strcpy(var_mount_image_2,"");
+  strcpy(var_mount_image_3,"");
+  strcpy(var_mount_image_4,"");
+  strcpy(var_mount_image_5,"");
+  strcpy(var_mount_image_6,"");
+  strcpy(var_mount_image_7,"");
+  strcpy(var_mount_folder_0,DEFAULTDIR);
+  strcpy(var_mount_folder_1,"");
+  strcpy(var_mount_folder_2,"");
+  strcpy(var_mount_folder_3,"");
+  strcpy(var_mount_folder_4,"");
+  strcpy(var_mount_folder_5,"");
+  strcpy(var_mount_folder_6,"");
+  strcpy(var_mount_folder_7,"");
 };
 
 void config_parseopt(char *opt,char *val) {
@@ -63,19 +73,28 @@ void config_parseopt(char *opt,char *val) {
   if (strcmp(opt,"debug.blit")==0)              var_debug_blit=atoi(val);
   if (strcmp(opt,"debug.clock")==0)             var_debug_clock=atoi(val);
   if (strcmp(opt,"debug.rtcwrite")==0)          var_debug_rtcwrite=atoi(val);
+  if (strcmp(opt,"debug.hostfs")==0)            var_debug_hostfs=atoi(val);
   if (strcmp(opt,"system.z80memdump")==0)       var_system_z80memdump=atoi(val);
   if (strcmp(opt,"system.memdump")==0)          var_system_memdump=atoi(val);
   if (strcmp(opt,"system.grabkeys")==0)         var_system_grabkeys=atoi(val);
   if (strcmp(opt,"system.shutdown")==0)         snprintf(var_system_shutdown,CONFIGSTRINGSIZE-1,"%s",val);
   if (strcmp(opt,"system.bootfile")==0)         snprintf(var_system_bootfile,CONFIGSTRINGSIZE-1,"%s",val);
-  if (strcmp(opt,"system.hdd.0")==0)            snprintf(var_system_hdd_0,CONFIGSTRINGSIZE-1,"%s",val);
-  if (strcmp(opt,"system.hdd.1")==0)            snprintf(var_system_hdd_1,CONFIGSTRINGSIZE-1,"%s",val);
-  if (strcmp(opt,"system.hdd.2")==0)            snprintf(var_system_hdd_2,CONFIGSTRINGSIZE-1,"%s",val);
-  if (strcmp(opt,"system.hdd.3")==0)            snprintf(var_system_hdd_3,CONFIGSTRINGSIZE-1,"%s",val);
-  if (strcmp(opt,"system.hdd.4")==0)            snprintf(var_system_hdd_4,CONFIGSTRINGSIZE-1,"%s",val);
-  if (strcmp(opt,"system.hdd.5")==0)            snprintf(var_system_hdd_5,CONFIGSTRINGSIZE-1,"%s",val);
-  if (strcmp(opt,"system.hdd.6")==0)            snprintf(var_system_hdd_6,CONFIGSTRINGSIZE-1,"%s",val);
-  if (strcmp(opt,"system.hdd.7")==0)            snprintf(var_system_hdd_7,CONFIGSTRINGSIZE-1,"%s",val);
+  if (strcmp(opt,"mount.image.0")==0)           snprintf(var_mount_image_0,CONFIGSTRINGSIZE-1,"%s",val);
+  if (strcmp(opt,"mount.image.1")==0)           snprintf(var_mount_image_1,CONFIGSTRINGSIZE-1,"%s",val);
+  if (strcmp(opt,"mount.image.2")==0)           snprintf(var_mount_image_2,CONFIGSTRINGSIZE-1,"%s",val);
+  if (strcmp(opt,"mount.image.3")==0)           snprintf(var_mount_image_3,CONFIGSTRINGSIZE-1,"%s",val);
+  if (strcmp(opt,"mount.image.4")==0)           snprintf(var_mount_image_4,CONFIGSTRINGSIZE-1,"%s",val);
+  if (strcmp(opt,"mount.image.5")==0)           snprintf(var_mount_image_5,CONFIGSTRINGSIZE-1,"%s",val);
+  if (strcmp(opt,"mount.image.6")==0)           snprintf(var_mount_image_6,CONFIGSTRINGSIZE-1,"%s",val);
+  if (strcmp(opt,"mount.image.7")==0)           snprintf(var_mount_image_7,CONFIGSTRINGSIZE-1,"%s",val);
+  if (strcmp(opt,"mount.folder.0")==0)          snprintf(var_mount_folder_0,CONFIGSTRINGSIZE-1,"%s",val);
+  if (strcmp(opt,"mount.folder.1")==0)          snprintf(var_mount_folder_1,CONFIGSTRINGSIZE-1,"%s",val);
+  if (strcmp(opt,"mount.folder.2")==0)          snprintf(var_mount_folder_2,CONFIGSTRINGSIZE-1,"%s",val);
+  if (strcmp(opt,"mount.folder.3")==0)          snprintf(var_mount_folder_3,CONFIGSTRINGSIZE-1,"%s",val);
+  if (strcmp(opt,"mount.folder.4")==0)          snprintf(var_mount_folder_4,CONFIGSTRINGSIZE-1,"%s",val);
+  if (strcmp(opt,"mount.folder.5")==0)          snprintf(var_mount_folder_5,CONFIGSTRINGSIZE-1,"%s",val);
+  if (strcmp(opt,"mount.folder.6")==0)          snprintf(var_mount_folder_6,CONFIGSTRINGSIZE-1,"%s",val);
+  if (strcmp(opt,"mount.folder.7")==0)          snprintf(var_mount_folder_7,CONFIGSTRINGSIZE-1,"%s",val);
 };
 
 int config_readini() {

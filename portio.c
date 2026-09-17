@@ -19,6 +19,7 @@
 #include "blitter.h"
 #include "version.h"
 #include "rtc.h"
+#include "hostfs.h"
 
 uint32_t memptr1=0,memptr2=0,dmaptr=0,dsklba=0;
 int memdma=0;
@@ -104,6 +105,54 @@ int z80_in(unsigned int port) {
       break;
     case P_MOUSEB:
       return(sys_mouseb);
+      break;
+    case P_HOSTFS:
+      return(hostfs_data[0x0]);
+      break;
+    case P_HFSDAT_1:
+      return(hostfs_data[0x1]);
+      break;
+    case P_HFSDAT_2:
+      return(hostfs_data[0x2]);
+      break;
+    case P_HFSDAT_3:
+      return(hostfs_data[0x3]);
+      break;
+    case P_HFSDAT_4:
+      return(hostfs_data[0x4]);
+      break;
+    case P_HFSDAT_5:
+      return(hostfs_data[0x5]);
+      break;
+    case P_HFSDAT_6:
+      return(hostfs_data[0x6]);
+      break;
+    case P_HFSDAT_7:
+      return(hostfs_data[0x7]);
+      break;
+    case P_HFSDAT_8:
+      return(hostfs_data[0x8]);
+      break;
+    case P_HFSDAT_9:
+      return(hostfs_data[0x9]);
+      break;
+    case P_HFSDAT_A:
+      return(hostfs_data[0xA]);
+      break;
+    case P_HFSDAT_B:
+      return(hostfs_data[0xB]);
+      break;
+    case P_HFSDAT_C:
+      return(hostfs_data[0xC]);
+      break;
+    case P_HFSDAT_D:
+      return(hostfs_data[0xD]);
+      break;
+    case P_HFSDAT_E:
+      return(hostfs_data[0xE]);
+      break;
+    case P_HFSDAT_F:
+      return(hostfs_data[0xF]);
       break;
     case P_DSKPTR_L:
       return(dmaptr&0xff);
@@ -309,6 +358,54 @@ void z80_out(unsigned int port, unsigned int value) {
       break;
     case P_MPTRY_HI:
       video_mptry=(video_mptry&0xff)|(value<<8);
+      break;
+    case P_HOSTFS:
+      hostfs_execute(value);
+      break;
+    case P_HFSDAT_1:
+      hostfs_data[0x1]=value;
+      break;
+    case P_HFSDAT_2:
+      hostfs_data[0x2]=value;
+      break;
+    case P_HFSDAT_3:
+      hostfs_data[0x3]=value;
+      break;
+    case P_HFSDAT_4:
+      hostfs_data[0x4]=value;
+      break;
+    case P_HFSDAT_5:
+      hostfs_data[0x5]=value;
+      break;
+    case P_HFSDAT_6:
+      hostfs_data[0x6]=value;
+      break;
+    case P_HFSDAT_7:
+      hostfs_data[0x7]=value;
+      break;
+    case P_HFSDAT_8:
+      hostfs_data[0x8]=value;
+      break;
+    case P_HFSDAT_9:
+      hostfs_data[0x9]=value;
+      break;
+    case P_HFSDAT_A:
+      hostfs_data[0xA]=value;
+      break;
+    case P_HFSDAT_B:
+      hostfs_data[0xB]=value;
+      break;
+    case P_HFSDAT_C:
+      hostfs_data[0xC]=value;
+      break;
+    case P_HFSDAT_D:
+      hostfs_data[0xD]=value;
+      break;
+    case P_HFSDAT_E:
+      hostfs_data[0xE]=value;
+      break;
+    case P_HFSDAT_F:
+      hostfs_data[0xF]=value;
       break;
     case P_DSKPTR_L:
       dmaptr=(dmaptr&MEM_MASK&0xffff00)|value;

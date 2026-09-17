@@ -1,6 +1,6 @@
 SymbOS-VM Register Listing - by insane/rabenauge^tSCc
 
-WIP 20250801
+WIP 20250813
 
 Memory Address Space:
   $000000-$3FFFFF
@@ -100,6 +100,23 @@ I/O Ports (Ports in HEX):
      |Mouse Pointer Background Color=0xff, use CHRSEL to write        |
      |Note: set position x/y to 0xffff to hide mouse                  |
 -----+----------------------------------------------------------------+
+30 RW|HostFS Interface - Execute Command/Status Byte                  |P_HOSTFS
+31 RW|Data Package / Mailbox Byte #1                                  |P_HFSDAT_1
+32 RW|Data Package / Mailbox Byte #2                                  |P_HFSDAT_2
+33 RW|Data Package / Mailbox Byte #3                                  |P_HFSDAT_3
+34 RW|Data Package / Mailbox Byte #4                                  |P_HFSDAT_4
+35 RW|Data Package / Mailbox Byte #5                                  |P_HFSDAT_5
+36 RW|Data Package / Mailbox Byte #6                                  |P_HFSDAT_6
+37 RW|Data Package / Mailbox Byte #7                                  |P_HFSDAT_7
+38 RW|Data Package / Mailbox Byte #8                                  |P_HFSDAT_8
+39 RW|Data Package / Mailbox Byte #9                                  |P_HFSDAT_9
+3A RW|Data Package / Mailbox Byte #A                                  |P_HFSDAT_A
+3B RW|Data Package / Mailbox Byte #B                                  |P_HFSDAT_B
+3C RW|Data Package / Mailbox Byte #C                                  |P_HFSDAT_C
+3D RW|Data Package / Mailbox Byte #D                                  |P_HFSDAT_D
+3E RW|Data Package / Mailbox Byte #E                                  |P_HFSDAT_E
+3F RW|Data Package / Mailbox Byte #F                                  |P_HFSDAT_F
+-----+----------------------------------------------------------------+
 40 RW|Disk DMA Pointer low-byte                                       |P_DSKPTR_L
 41 RW|Disk DMA Pointer high-byte                                      |P_DSKPTR_H
 42 RW|Disk DMA Pointer upper-byte                                     |P_DSKPTR_U
@@ -122,13 +139,10 @@ I/O Ports (Ports in HEX):
      |     Status=1 if OK, 0 if Write Error                      : : :|
      |- Drive Select (0-7) --------------------------------------+-+-+|
 48 R |Disk Command Status                          BIT 7 6 5 4 3 2 1 0|P_DSKCMD
-     |                                                 : 0 0 0 0 0 : :|
-     |- 1: DMA Busy -----------------------------------+           : :|D_DSKBUSY(80)
-     |  Always 0 in SYMBOSVM, Z80 is halted during disk dma        : :|
-     |- 1: use HOSTFS interface instead of direct drive dma -------+ :|D_DSKHOSTFS(02)
+     |                                                 : 0 0 0 0 0 0 :|
+     |- 1: DMA Busy -----------------------------------+             :|D_DSKBUSY(80)
+     |  Always 0 in SYMBOSVM, Z80 is halted during disk dma          :|
      |- 1: Last Command OK, 0: I/O Error ----------------------------+|D_DSKOK(01)
-49 RW|HostFS Interface                                                |P_HOSTFS
-     |(To be defined)                                                 |
 -----+----------------------------------------------------------------+
 50 RW|Video Pointer low-byte                                          |P_VIDPTR_L
 51 RW|Video Pointer high-byte                                         |P_VIDPTR_H

@@ -18,10 +18,23 @@
 #include "system.h"
 #include "drives.h"
 #include "config.h"
+#include "hostfs.h"
 #include "release.h"
 #include "version.h"
 
 int main(int argc, char *argv[]) {
+#if 0
+  char buf[256];
+  char *root = "symbosvm";
+  char *guest = "A:\\FOLDER\\FILE.EXT/TESTING.TXT";
+
+  if (hostfs_resolve(root, guest, buf, sizeof(buf))) {
+    printf("Safe path: %s\n", buf);
+  } else {
+    perror("resolve");
+  }
+  exit(0);
+#endif
   printf("SYMBOSVM v%i.%i b%s.%s\n",VERSION_MAJOR,VERSION_MINOR,SYMBOSVM_BUILD_D,SYMBOSVM_BUILD_T);
   preinit_system();
 
@@ -37,6 +50,7 @@ int main(int argc, char *argv[]) {
   };
 
   init_drives();
+  init_hostfs();
   init_video();
   init_audio();
   init_z80();
@@ -47,6 +61,7 @@ int main(int argc, char *argv[]) {
   done_audio();
   done_video();
   done_system();
+  done_hostfs();
   done_drives();
 
   if (sys_quit_type==D_VMSHUTDOWN) {

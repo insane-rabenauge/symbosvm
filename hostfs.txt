@@ -1,0 +1,294 @@
+SymbOSVM HostFS file and directory functions 20250813.2152
+
+(for notes/remarks see below)
+
+HostFS: 16 bytes mailbox system
+1b H-CMD: function select / status
+15b implementation defined, used as DAT#1-DAT#F
+
+path/name string: 0-terminated string with up to 255 chars
+
+=========================================================================================================
+File_New:
+  Creates a new file and opens it for read/write access. If the file was already existing,
+  it will be emptied first. The operation will be aborted, if the existing file is read only or
+  an sub directory.
+
+I:H-CMD: ID for File_New (017)
+I:DAT#1: File-ID to use
+I:DAT#2: HostFS Drive to use
+
+I:DAT#3: Attributes
+I:DAT#8: File path and name address low
+I:DAT#9: File path and name address high
+I:DAT#B: File path and name address upper
+
+O:H-CMD: Status
+---------------------------------------------------------------------------------------------------------
+File_Open:
+  Opens an existing file for read/write access.
+
+I:H-CMD: ID for File_Open (018)
+I:DAT#1: File-ID to use
+I:DAT#2: HostFS Drive to use
+
+I:DAT#8: File path and name address low
+I:DAT#9: File path and name address high
+I:DAT#B: File path and name address upper
+
+O:H-CMD: Status
+   001 - OK
+   000 - Device does not exist
+   011 - Device does not exist
+   013 - File does not exist
+   014 - Access is forbidden
+---------------------------------------------------------------------------------------------------------
+File_Close:
+  Closes an opened file.
+
+I:H-CMD: ID for File_Close (019)
+I:DAT#1: File-ID to use
+
+O:H-CMD: Status
+---------------------------------------------------------------------------------------------------------
+File_Input:
+  Reads a specified amount of bytes out of an opened file. After this operation the file pointer will be
+  moved behind the last read byte. This means, that it is possible to read several blocks with different
+  sizes out of an opened file. It doesn't matter, if you already did write operations, too.
+  If you try to read more bytes than available, the zero flag will be reset.
+
+I:H-CMD: ID for File_Input (020)
+I:DAT#1: File-ID to use
+
+I:DAT#4: bytes to read low
+I:DAT#5: bytes to read high
+I:DAT#6: destination address upper
+I:DAT#8: destination address low
+I:DAT#9: destination address high
+
+O:H-CMD: Status
+O:DAT#8: number of read bytes low
+O:DAT#9: number of read bytes high
+---------------------------------------------------------------------------------------------------------
+File_Output:
+  Writes a specified amount of bytes into an opened file. After this operation the file pointer will be
+  moved behind the last written byte. If the file pointer has been somewhere in the middle of the file
+  before this operation, the data at this place will be overwritten. If you have been at the end of the
+  file, its length will be extended.
+
+I:H-CMD: ID for File_Output (021)
+I:DAT#1: File-ID to use
+
+I:DAT#4: bytes to write low
+I:DAT#5: bytes to write high
+I:DAT#6: source address upper
+I:DAT#8: source address low
+I:DAT#9: source address high
+
+O:H-CMD: Status
+O:DAT#8: number of written bytes low
+O:DAT#9: number of written bytes high
+---------------------------------------------------------------------------------------------------------
+File_Pointer:
+  fseek/ftell
+
+I:H-CMD: ID for File_Pointer (022)
+I:DAT#1: File-ID to use
+
+I:DAT#4: reference point
+I:DAT#A: file pointer b0-b7
+I:DAT#B: file pointer b8-b15
+I:DAT#C: file pointer b16-b23
+I:DAT#D: file pointer b24-b31
+
+O:H-CMD: Status
+O:DAT#A: file pointer b0-b7
+O:DAT#B: file pointer b8-b15
+O:DAT#C: file pointer b16-b23
+O:DAT#D: file pointer b24-b31
+---------------------------------------------------------------------------------------------------------
+Directory_Property_Set
+  Changes a property of a file or a directory. You can set the attribute,
+  the "created" time and the "modified" time.
+
+I:H-CMD: ID for Directory_Property_Set (034)
+I:DAT#2: HostFS Drive to use
+
+I:DAT#3: Property Type
+I:DAT#8: File path and name address low
+I:DAT#9: File path and name address high
+I:DAT#B: File path and name address upper
+
+I:DAT#4: time code lo (C-reg) or attribute
+I:DAT#5: time code hi (B-reg)
+I:DAT#6: date code lo (E-reg)
+I:DAT#7: date code hi (D-reg)
+
+O:H-CMD: Status
+---------------------------------------------------------------------------------------------------------
+Directory_Property_Get
+  Reads a property of a file or a directory.
+
+I:H-CMD: ID for Directory_Property_Get (035)
+I:DAT#2: HostFS Drive to use
+
+I:DAT#3: Property Type
+I:DAT#8: File path and name address low
+I:DAT#9: File path and name address high
+I:DAT#B: File path and name address upper
+
+O:H-CMD: Status
+O:DAT#4: time code lo (C-reg) or attribute
+O:DAT#5: time code hi (B-reg)
+O:DAT#6: date code lo (E-reg)
+O:DAT#7: date code hi (D-reg)
+---------------------------------------------------------------------------------------------------------
+Directory_Rename
+  Renames a file or a directory. The new file name must not include a path.
+  The function will fail, if a file or directory with the new name already exists.
+
+I:H-CMD: ID for Directory_Rename (036)
+I:DAT#2: HostFS Drive to use
+
+I:DAT#8: File path and old name address low
+I:DAT#9: File path and old name address high
+I:DAT#B: address upper for file path and old name and new name
+I:DAT#6: New name address low
+I:DAT#7: New name address high
+
+O:H-CMD: Status
+---------------------------------------------------------------------------------------------------------
+Directory_New
+  Creates a new directory. The function will fail,
+  if a file or directory with the same name already exists.
+
+I:H-CMD: ID for Directory_New (037)
+I:DAT#2: HostFS Drive to use
+
+I:DAT#8: File path and name address low
+I:DAT#9: File path and name address high
+I:DAT#B: File path and name address upper
+
+O:H-CMD: Status
+---------------------------------------------------------------------------------------------------------
+Directory_Input
+  Reads the content of a directory. You can specify a name filter by adding a file mask to the path
+  (* and ? are allowed) and an attribute filter.  The system skips the specified amount of entries first
+  and then loads as many entries as exist or as there is place in the destination buffer.
+  Please note, that the entries will not be sorted. Depending on its name every entry in the destination
+  buffer can have a different length and is terminated with 0 behind the file name. The next entry is
+  following directly after the 0-terminator.
+
+I:H-CMD: ID for Directory_Input (038)
+I:DAT#2: HostFS Drive to use
+
+I:DAT#6: Destination buffer address low
+I:DAT#7: Destination buffer address high
+I:DAT#3: Destination buffer address upper
+I:DAT#4: Destination buffer length low
+I:DAT#5: Destination buffer length high
+I:DAT#8: Directory path address low
+I:DAT#9: Directory path address high
+I:DAT#B: Directory path address upper
+I:DAT#A: Attribute Filter
+I:DAT#C: Number of entires, which should be skipped low
+I:DAT#D: Number of entires, which should be skipped high
+
+O:H-CMD: Status
+O:DAT#4: Remaining unused space in the destination buffer low
+O:DAT#5: Remaining unused space in the destination buffer high
+O:DAT#8: Number of read entries low
+O:DAT#9: Number of read entries high
+---------------------------------------------------------------------------------------------------------
+Directory_DeleteFile
+  Deletes one or more files. You can delete multiple files by using a file mask (* and ? are allowed).
+  Files, which are read only, can't be deleted.
+  This function also can't be used for deleting directories.
+I:H-CMD: ID for Directory_DeleteFile (039)
+I:DAT#2: HostFS Drive to use
+
+I:DAT#8: File path/mask address low
+I:DAT#9: File path/mask address high
+I:DAT#B: File path/mask address upper
+
+O:H-CMD: Status
+---------------------------------------------------------------------------------------------------------
+Directory_DeleteDirectory
+  Deletes a sub directory. The sub directory has to be empty and not read only, otherwise the operation
+  will be aborted. You can specify the directory with or without "/" at the end of the full path.
+
+I:H-CMD: ID for Directory_DeleteDirectory (040)
+I:DAT#2: HostFS Drive to use
+
+I:DAT#8: Directory path address low
+I:DAT#9: Directory path address high
+I:DAT#B: Directory path address upper
+
+O:H-CMD: Status
+---------------------------------------------------------------------------------------------------------
+Directory_Move
+  Moves a file or sub directory into another directory of the same drive. That means, that the drive
+  letter of the source path must be the same like the drive letter of the destination path, otherwise
+  the operation will be aborted. You can either move files or sub directories with this function, in 
+  both cases the source path+name must not end with a "/".
+
+I:H-CMD: ID for Directory_Move (041)
+I:DAT#2: HostFS Drive to use
+
+I:DAT#6: File/directory destination path address low
+I:DAT#7: File/directory destination path address high
+I:DAT#8: File/directory source path address low
+I:DAT#9: File/directory source path address high
+I:DAT#B: File/directory source and destination path address upper
+
+O:H-CMD: Status
+---------------------------------------------------------------------------------------------------------
+DriveInformation
+  Returns information about one drive. Both Information Type 0 and Type 1 at the same time
+
+I:H-CMD: ID for Directory_DriveInformation (042)
+I:DAT#2: HostFS Drive to use
+
+O:H-CMD: Status
+O:DAT#1: Drive Status
+O:DAT#2: Medium
+O:DAT#3: File System
+O:DAT#4: number of free 512byte sectors b0-b7
+O:DAT#5: number of free 512byte sectors b8-b15
+O:DAT#6: number of free 512byte sectors b16-b23
+O:DAT#7: number of free 512byte sectors b24-b31
+O:DAT#8: Total number of clusters b0-b7
+O:DAT#9: Total number of clusters b8-b15
+O:DAT#A: Total number of clusters b16-b23
+O:DAT#B: Total number of clusters b24-b31
+O:DAT#C: Sectors per cluster
+=========================================================================================================
+
+attributes
+bit0 = 1 -> read only
+bit1 = 1 -> hidden
+bit2 = 1 -> system
+bit3 = 1 -> volume id
+bit4 = 1 -> directory
+bit5 = 1 -> archive
+
+---------------------------------------------------------------------------------------------------------
+
+- pfade werden immer komplett mit laufwerk am anfang uebergeben, nicht relativ zu einem aktuellen; sowohl
+  / als auch \ gelten als verzeichnis trenner (also wohl einfach n replace("\","/") machen)
+- geoeffnete files sind immer read/write
+- files koennen verlaengert, aber nicht verkuerzt werden; ist der filepointer mittendrin beim schliessen,
+  wird also nicht hinter dem pointer der rest abgeschnitten
+- directory_input (directory lesen)
+  so funktioniert es aktuell und weicht von der klassischen funktion ab (CP/M, MS-DOS), die immer nur
+  einen einzigen eintrag laedt, einen nach dem anderen (war mir viel zu lahm); man kann das aber auch
+  gerne klassisch machen, und ich uebersetz das intern in die symbos methode (keine ahnung wie das
+  heutige OS machen)
+
+- device add/remove fehlt noch; waere dann wohl einfach laufwerksbuchstabe fuer die SVM und die device ID
+  vom host
+
+----
+- drive id wird uebergeben
+- komplette pfade - hostfs ignoriert laufwerksangabe und ueberschreibt mit gemappter ID
+

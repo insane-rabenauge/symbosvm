@@ -1,4 +1,4 @@
-symbosvm v1.1
+symbosvm v2.0 alpha "Hausarrest"
 a fast Z80 virtual machine for the SYmbiosis Multitasking Based Operating System
 
 written by insane of Rabenauge^.tSCc.

@@ -66,14 +66,14 @@ int drive_write(int drive,int seccnt,uint32_t lbasec,uint32_t dmaptr) {
 };
 
 void init_drives() {
-  if (strlen(var_system_hdd_0)) if (drive_open(0,var_system_hdd_0)==0) printf("Error opening Drive 0 Image \"%s\"\n",var_system_hdd_0);
-  if (strlen(var_system_hdd_1)) if (drive_open(1,var_system_hdd_1)==0) printf("Error opening Drive 1 Image \"%s\"\n",var_system_hdd_1);
-  if (strlen(var_system_hdd_2)) if (drive_open(2,var_system_hdd_2)==0) printf("Error opening Drive 2 Image \"%s\"\n",var_system_hdd_2);
-  if (strlen(var_system_hdd_3)) if (drive_open(3,var_system_hdd_3)==0) printf("Error opening Drive 3 Image \"%s\"\n",var_system_hdd_3);
-  if (strlen(var_system_hdd_4)) if (drive_open(4,var_system_hdd_4)==0) printf("Error opening Drive 4 Image \"%s\"\n",var_system_hdd_4);
-  if (strlen(var_system_hdd_5)) if (drive_open(5,var_system_hdd_5)==0) printf("Error opening Drive 5 Image \"%s\"\n",var_system_hdd_5);
-  if (strlen(var_system_hdd_6)) if (drive_open(6,var_system_hdd_6)==0) printf("Error opening Drive 6 Image \"%s\"\n",var_system_hdd_6);
-  if (strlen(var_system_hdd_7)) if (drive_open(7,var_system_hdd_7)==0) printf("Error opening Drive 7 Image \"%s\"\n",var_system_hdd_7);
+  if (strlen(var_mount_image_0)) if (drive_open(0,var_mount_image_0)==0) printf("Error opening Drive 0 Image \"%s\"\n",var_mount_image_0);
+  if (strlen(var_mount_image_1)) if (drive_open(1,var_mount_image_1)==0) printf("Error opening Drive 1 Image \"%s\"\n",var_mount_image_1);
+  if (strlen(var_mount_image_2)) if (drive_open(2,var_mount_image_2)==0) printf("Error opening Drive 2 Image \"%s\"\n",var_mount_image_2);
+  if (strlen(var_mount_image_3)) if (drive_open(3,var_mount_image_3)==0) printf("Error opening Drive 3 Image \"%s\"\n",var_mount_image_3);
+  if (strlen(var_mount_image_4)) if (drive_open(4,var_mount_image_4)==0) printf("Error opening Drive 4 Image \"%s\"\n",var_mount_image_4);
+  if (strlen(var_mount_image_5)) if (drive_open(5,var_mount_image_5)==0) printf("Error opening Drive 5 Image \"%s\"\n",var_mount_image_5);
+  if (strlen(var_mount_image_6)) if (drive_open(6,var_mount_image_6)==0) printf("Error opening Drive 6 Image \"%s\"\n",var_mount_image_6);
+  if (strlen(var_mount_image_7)) if (drive_open(7,var_mount_image_7)==0) printf("Error opening Drive 7 Image \"%s\"\n",var_mount_image_7);
 };
 
 void done_drives() {

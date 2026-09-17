@@ -12,18 +12,19 @@ vmz80.c\
 drives.c\
 config.c\
 rtc.c\
+hostfs.c\
 system-sdl2.c\
 
 ifeq ($(CROSS),w32)
 CC=i686-w64-mingw32-gcc
-SDLPATH=$(CROSSLIB)/SDL2-2.30.5/i686-w64-mingw32/bin/
+SDLPATH=$(CROSSLIB)/SDL2-2.32.10/i686-w64-mingw32/bin/
 XLDFLAGS=-Wl,-subsystem,console
 SDLLIBS=`$(SDLPATH)sdl2-config --libs`
 TARGETDIR=bin/win32
 OBJDIR=obj/win32
 else ifeq ($(CROSS),w64)
 CC=x86_64-w64-mingw32-gcc
-SDLPATH=$(CROSSLIB)/SDL2-2.30.5/x86_64-w64-mingw32/bin/
+SDLPATH=$(CROSSLIB)/SDL2-2.32.10/x86_64-w64-mingw32/bin/
 XLDFLAGS=-Wl,-subsystem,console
 SDLLIBS=`$(SDLPATH)sdl2-config --libs`
 TARGETDIR=bin/win64
