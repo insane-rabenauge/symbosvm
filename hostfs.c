@@ -1,3 +1,11 @@
+/*
+ * This file is part of the SymbosVM project, which is distributed
+ * under the terms of the GNU General Public License; either
+ * version 2 of the License, or (at your option) any later version.
+ */
+
+// written by insane/Rabenauge^.tSCc.
+
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -46,10 +54,6 @@ static FILE *hostfiles[MAX_FILES];
 
 uint8_t hostfs_data[16];
 
-/* Copy src to dst of size 'size'.
-   At most size-1 characters will be copied.
-   Always NUL-terminates (unless size == 0).
-   Returns strlen(src); if return >= size, truncation occurred. */
 size_t strlcpy(char *dst, const char *src, size_t size) {
   size_t src_len = 0;
   const char *s = src;
@@ -77,11 +81,6 @@ static int host_mkdir(const char *path) {
 }
 
 
-/* Append src to dst of size 'size'.
-   At most size-1 characters will be in dst.
-   Always NUL-terminates (unless size == 0 and dst not NUL-terminated).
-   Returns initial length of dst + strlen(src);
-   if return >= size, truncation occurred. */
 size_t strlcat(char *dst, const char *src, size_t size) {
   size_t dst_len = 0;
   size_t src_len = 0;
@@ -176,10 +175,6 @@ static int name_match(const char *name, const char *mask) {
   return *name == '\0';
 }
 
-// ----------------------------------------------------
-// split "dir/mask" style guest path into directory and file mask -
-// used by both Directory_Input and Directory_DeleteFile
-// ----------------------------------------------------
 static void split_dir_mask(char *dirpath_mask, char *dirpath, size_t dirpath_sz,
                             char *mask, size_t mask_sz) {
   normalize_separators(dirpath_mask);
@@ -196,9 +191,7 @@ static void split_dir_mask(char *dirpath_mask, char *dirpath, size_t dirpath_sz,
   }
 }
 
-// ----------------------------------------------------
 // Case-insensitive path resolver for Linux
-// ----------------------------------------------------
 #ifndef _WIN32
 static int str_casecmp(const char *a, const char *b) {
   for (; *a && *b; a++, b++) {
@@ -228,7 +221,6 @@ static int find_case_insensitive_path(const char *input, char *resolved, size_t 
     char part[256];
     char *q = part;
 
-    // Extract next component
     while (*p && *p != '/') *q++ = *p++;
     *q = '\0';
     if (*p == '/') p++;
@@ -254,7 +246,7 @@ static int find_case_insensitive_path(const char *input, char *resolved, size_t 
       }
     }
     closedir(dir);
-    if (!found) { //append last search and reply 1
+    if (!found) {
       strcpy(out,part);
       out += strlen(part);
       *out++ = '/';
@@ -264,15 +256,12 @@ static int find_case_insensitive_path(const char *input, char *resolved, size_t 
     }
   }
 
-  // Remove trailing slash unless root
   if (out - resolved > 1 && *(out - 1) == '/') *(out - 1) = '\0';
   return 1;
 }
 #endif
 
-// ----------------------------------------------------
 // Normalize path (remove ., ..)
-// ----------------------------------------------------
 static void normalize_path(char *path) {
   char *parts[256];
   int count = 0;
@@ -321,9 +310,6 @@ static void normalize_path(char *path) {
   strcpy(path, tmp);
 }
 
-// ----------------------------------------------------
-// Main hostfs_resolve
-// ----------------------------------------------------
 int hostfs_resolve(char *root, char *guest, char *out, size_t outsz) {
   char abs_root[4096+4];
   char combined[4096+4];
@@ -643,11 +629,6 @@ O:H-CMD: Status
     if (nw==0) nw=FILE_ATTRIBUTE_NORMAL;
     hostfs_setresult(SetFileAttributesA(hostname,nw) ? HFSERR_OK : HFSERRACS);
 #else
-    // Linux has no on-disk equivalent of HIDDEN/SYSTEM/VOLUME/ARCHIVE, so
-    // per the "ignore what isn't reliable" rule we only ever touch the
-    // write bits (ATTR_READONLY). Those other bits are silently dropped
-    // rather than faked (e.g. via a dotfile rename), which would surprise
-    // the guest more than just not persisting them.
     struct stat st;
     if (stat(hostname,&st)!=0) { hostfs_setresult(HFSERRXFI); return; }
     mode_t mode=st.st_mode;
@@ -663,7 +644,6 @@ O:H-CMD: Status
     uint16_t packeddate=(hostfs_data[0x7]<<8)|hostfs_data[0x6];
     time_t t=dostime_to_unix(packedtime,packeddate);
 #ifdef _WIN32
-    // Windows can set both timestamps reliably.
     HANDLE h=CreateFileA(hostname,GENERIC_WRITE,FILE_SHARE_READ|FILE_SHARE_WRITE,
                           NULL,OPEN_EXISTING,FILE_FLAG_BACKUP_SEMANTICS,NULL);
     if (h==INVALID_HANDLE_VALUE) { hostfs_setresult(HFSERRXFI); return; }
@@ -675,10 +655,6 @@ O:H-CMD: Status
     CloseHandle(h);
     hostfs_setresult(ok ? HFSERR_OK : HFSERRGEN);
 #else
-    // POSIX has no call to set a file's creation time at all (birth time,
-    // where it even exists, is fixed by the filesystem) - per the "ignore
-    // what isn't reliable" rule we just refuse that case outright instead
-    // of pretending it worked.
     if (proptype==HFSPROP_CREATED) { hostfs_setresult(HFSERRSUP); return; }
     struct stat st;
     if (stat(hostname,&st)!=0) { hostfs_setresult(HFSERRXFI); return; }
@@ -737,8 +713,6 @@ O:DAT#7: date code hi (D-reg)
     if (w&FILE_ATTRIBUTE_DIRECTORY) attr|=ATTR_DIRECTORY;
     if (w&FILE_ATTRIBUTE_ARCHIVE)   attr|=ATTR_ARCHIVE;
 #else
-    // Only READONLY/DIRECTORY are things Linux actually tracks; the rest
-    // simply read back as 0 (see the matching comment in Property_Set).
     if (!(st.st_mode & S_IWUSR)) attr|=ATTR_READONLY;
     if (S_ISDIR(st.st_mode)) attr|=ATTR_DIRECTORY;
 #endif
@@ -764,11 +738,6 @@ O:DAT#7: date code hi (D-reg)
     ULARGE_INTEGER ull; ull.LowPart=ft->dwLowDateTime; ull.HighPart=ft->dwHighDateTime;
     t=(time_t)((ull.QuadPart-116444736000000000ULL)/10000000ULL);
 #else
-    // Same reasoning as Property_Set: Linux has no reliable, portable
-    // file creation time, so per the "ignore unreliable features" rule
-    // HFSPROP_CREATED is simply not supported here rather than
-    // approximated - callers get a clear error instead of a timestamp
-    // that might quietly be wrong.
     if (proptype==HFSPROP_CREATED) { hostfs_setresult(HFSERRSUP); return; }
     t = st.st_mtime;
 #endif
@@ -802,11 +771,6 @@ I:DAT#7: New name address high
 
 O:H-CMD: Status
 */
-  // PITFALL: POSIX rename(2) silently REPLACES an existing destination
-  // by default - the opposite of "will fail if the new name already
-  // exists". We explicitly stat() the destination first on both
-  // platforms so behavior matches hostfs.txt on both OSes rather than
-  // only on Windows (where MoveFile already refuses on its own).
   uint8_t drive=hostfs_data[0x2];
   uint32_t z80oldptr=(hostfs_data[0xb]<<16)|(hostfs_data[0x9]<<8)|(hostfs_data[0x8]);
   uint32_t z80newptr=(hostfs_data[0xb]<<16)|(hostfs_data[0x7]<<8)|(hostfs_data[0x6]);
@@ -816,7 +780,7 @@ O:H-CMD: Status
   if (var_debug_hostfs>=1) printf("HOSTFS:%s:DRIVE %i:OLD #%s#:NEW #%s#\n",__func__,drive,oldptr,newname);
 
   if (strchr(newname,'/') || strchr(newname,'\\')) {
-    hostfs_setresult(HFSERRNNA); // new name must not include a path
+    hostfs_setresult(HFSERRNNA);
     return;
   }
 
@@ -826,8 +790,6 @@ O:H-CMD: Status
     return;
   };
 
-  // build guest-side "dir-of-old/newname" and resolve THAT, so the new
-  // path gets the same case-fixing/jailing as the old one
   char guestold[PATH_MAX];
   strlcpy(guestold,oldptr,sizeof(guestold));
   normalize_separators(guestold);
@@ -1031,12 +993,6 @@ I:DAT#B: File path/mask address upper
 
 O:H-CMD: Status
 */
-  // Confirmed against SymbOS-File.txt/SymbOS-File-SVM.asm: DIRDEL's
-  // documented SVM-level output is "CF=0->OK, BC=Number of deleted
-  // files, ZF=1 No files deleted due to no matches" - i.e. matching
-  // nothing is a SUCCESS with count 0, not an error. Only genuine
-  // failures (directory doesn't exist, or matched files all blocked by
-  // read-only) are true errors here.
   uint8_t drive=hostfs_data[0x2];
   uint32_t z80pathptr=(hostfs_data[0xb]<<16)|(hostfs_data[0x9]<<8)|(hostfs_data[0x8]);
   char *pathmask=(char*)&z80_mem[z80pathptr];
@@ -1074,11 +1030,6 @@ O:H-CMD: Status
 
     matched++;
 
-    // PITFALL: unlike Windows (DeleteFile refuses on FILE_ATTRIBUTE_READONLY
-    // on its own), POSIX unlink() only cares about *directory* write
-    // permission, not the target file's own mode bits - a chmod 444 file
-    // in a writable directory is perfectly unlinkable. So on Linux we
-    // check the read-only bit ourselves first.
 #ifndef _WIN32
     if (!(st.st_mode & S_IWUSR)) { readonly_skipped++; continue; }
 #else
@@ -1094,9 +1045,6 @@ O:H-CMD: Status
   closedir(d);
 
   if (matched>0 && deleted==0 && readonly_skipped==matched) {
-    // everything that matched was blocked by read-only - genuine failure,
-    // DAT#3/4/5 are irrelevant here since the SVM only inspects them on
-    // the non-error path (it returns early on a nonzero H-CMD/status)
     hostfs_setresult(HFSERRRDO);
     return;
   }
@@ -1104,7 +1052,7 @@ O:H-CMD: Status
   hostfs_data[0x3] = (uint8_t)(deleted != 0); // nonzero -> SVM's ZF=0 ("something was deleted")
   hostfs_data[0x4] = (uint8_t)deleted;
   hostfs_data[0x5] = (uint8_t)(deleted>>8);
-  hostfs_setresult(HFSERR_OK); // includes the "matched==0" case - that's success with count 0
+  hostfs_setresult(HFSERR_OK);
 };
 
 static void hostfs_directory_deletedirectory(void) {
@@ -1125,8 +1073,6 @@ I:DAT#B: Directory path address upper
   char *dirptr=(char*)&z80_mem[z80pathptr];
   if (var_debug_hostfs>=1) printf("HOSTFS:%s:DRIVE %i:#%s#\n",__func__,drive,dirptr);
 
-  // strip one trailing separator so "FOO/BAR/" and "FOO/BAR" resolve
-  // identically, per hostfs.txt allowing either form
   char trimmed[PATH_MAX];
   strlcpy(trimmed, dirptr, sizeof(trimmed));
   normalize_separators(trimmed);
@@ -1175,18 +1121,6 @@ I:DAT#8: File/directory source path address low
 I:DAT#9: File/directory source path address high
 I:DAT#B: File/directory source and destination path address upper
 */
-  // hostfs.txt is ambiguous about whether the destination is the exact
-  // new path+name, or a target directory to move the item INTO (keeping
-  // its old basename) - "moves a file or sub directory into another
-  // directory" reads like the latter, so that's what's implemented: if
-  // the resolved destination exists and is a directory, the source is
-  // placed inside it under its own name; otherwise the destination is
-  // treated as the literal target path. Flip this if SymbOS always sends
-  // a full target path instead.
-  //
-  // The "same drive" requirement is enforced on the guest side already
-  // (both paths carry the same DAT#2 drive) - we just resolve both under
-  // that one drive root.
   uint8_t drive=hostfs_data[0x2];
   uint32_t z80srcptr=(hostfs_data[0xb]<<16)|(hostfs_data[0x9]<<8)|(hostfs_data[0x8]);
   uint32_t z80dstptr=(hostfs_data[0xb]<<16)|(hostfs_data[0x7]<<8)|(hostfs_data[0x6]);
@@ -1222,8 +1156,6 @@ I:DAT#B: File/directory source and destination path address upper
     strlcpy(finaldst,dstresolved,sizeof(finaldst));
   }
 
-  // refuse to silently clobber an existing target (rename() would
-  // overwrite it on POSIX - same pitfall as Directory_Rename above)
   struct stat final_st;
   if (stat(finaldst,&final_st)==0) {
     hostfs_setresult(HFSERRDBL);
@@ -1268,14 +1200,6 @@ O:DAT#C: Sectors per cluster
   uint8_t drive=hostfs_data[0x2];
   if (var_debug_hostfs>=1) printf("HOSTFS:%s:DRIVE %i\n",__func__,drive);
 
-  // Real enum meanings confirmed from SymbOS-File.txt (STOINF/DIRINF).
-  // HostFS is a passthrough onto a host directory, not any of the listed
-  // physical media types, so medium/filesystem use the HOSTFS_MEDIUM /
-  // HOSTFS_FILESYSTEM "closest analogue" constants from hostfs.h rather
-  // than anything derived from the host OS's own (different!) enums -
-  // Windows' GetDriveType() values (2=removable,3=fixed,4=remote,...) are
-  // NOT the same scale as SymbOS's medium byte and must not be forwarded
-  // directly.
   uint8_t status=HFSDRV_NOTPRESENT, medium=HOSTFS_MEDIUM, filesystem=HOSTFS_FILESYSTEM, sectors_per_cluster=1;
   uint32_t free_sectors=0, total_clusters=0;
 
