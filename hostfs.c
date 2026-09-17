@@ -6,6 +6,12 @@
 
 // written by insane/Rabenauge^.tSCc.
 
+/*
+unstable work in progress
+todo: test deletion
+todo: split into win32/unix/insaneos
+*/
+
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
